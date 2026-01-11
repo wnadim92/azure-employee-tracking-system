@@ -1,18 +1,18 @@
 variable "rg_name" {
   type        = string
-  description = "The name of the resource group."  
+  description = "The name of the resource group."
   default     = "rg"
 }
 
 variable "region" {
   type        = string
-  description = "The Azure region where the resource group will be provisioned." 
+  description = "The Azure region where the resource group will be provisioned."
   default     = "eastus"
 }
 
 variable "nsg_name" {
   type        = string
-  description = "The name of the Azure Network Security Group. Used as a firewall on a subnet or a VM NIC" 
+  description = "The name of the Azure Network Security Group. Used as a firewall on a subnet or a VM NIC"
   default     = "nsg"
 }
 

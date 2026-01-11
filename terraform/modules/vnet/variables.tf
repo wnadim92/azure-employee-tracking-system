@@ -5,13 +5,13 @@ variable "rg_name" {
 
 variable "region" {
   type        = string
-  description = "The Azure region for the VNet."  
+  description = "The Azure region for the VNet."
   default     = "eastus"
 }
 
 variable "vnet_name" {
   type        = string
-  description = "The name of the virtual network."  
+  description = "The name of the virtual network."
   default     = "vnet"
 }
 
