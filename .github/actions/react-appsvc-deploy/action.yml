@@ -1,0 +1,30 @@
+name: 'React App Service Deploy'
+description: 'Builds a React Appication and Deploys it onto Azure App Service'
+inputs:
+    APP_SVC_NAME:
+        description: 'The App Service the React Application will be deployed onto'
+        required: true
+    TARGET_ENVIRONMENT:
+        description: 'The target environment to deploy towards (dev, uat, prod)'
+        required: true
+
+runs:
+    using: "composite"
+    steps:
+        - name: setting up node
+          uses: actions/setup-node@4
+          with:
+            node-version: 16.14.0
+
+        - name: cache npm dependencies
+          id: cache-npm
+          uses: actions/cache@4
+          env:
+            cache-name: cache-node-modules
+          with:
+            path: ~/.nm
+            key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+            restore-keys: |
+                ${{ runner.os }}-build-${{ env.cache-name }}-
+                ${{ runner.os }}-build-
+                ${{ runner.os }}-
