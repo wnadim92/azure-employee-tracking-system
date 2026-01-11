@@ -28,15 +28,11 @@ inputs:
 runs:
     using: "composite"
     steps:
-    - name: checkout terraform infrastructure repo
-      uses: actions/checkout@v4
-      with:
-        repository: ${{ inputs.GIT_REPOSITORY_NAME }}
-        token: ${{ inputs.GITHUB_TOKEN }}
-        path: ${{ inputs.CHECKOUT_PATH }}
-        ref: ${{ inputs.GIT_REPOSITORY_REF }}
-
     - name: setup terraform
       uses: hashicorp/setup-terraform@v2
       with:
         terraform_version: ${{ inputs.TF_VERSION }}
+
+    - name: run terraform deployment
+      shell: bash
+      working-directory: ${{ inputs.CHECKOUT_PATH }}
