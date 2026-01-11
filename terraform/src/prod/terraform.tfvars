@@ -1,0 +1,11 @@
+project_name
+region
+environment
+vnet_address_spaces
+dns_servers
+emp_track_frontend_appgw_snet_cidr
+emp_track_frontend_pe_snet_cidr
+emp_track_frontend_vnetintegration_snet_cidr
+emp_track_middletier_pe_snet_cidr
+emp_track_middletier_vnetintegration_snet_cidr
+emp_track_db_snet_cidr
