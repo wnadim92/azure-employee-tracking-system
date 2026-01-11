@@ -1,27 +1,33 @@
 name: Deploy Infrastructure and Three Tier App
 
 on:
-#   push:
-#     branches:
-#       - main
-#   pull_request:
-#     branches:
-#       - main
     workflow_dispatch:      
 
 env:
-    ENV: ${{ fromJSON('{"develop":"nonprod","main:"prod"}')[github.ref_name] || 'dev' }}
+    ENV: ${{ fromJSON('{"develop":"nonprod","main":"prod"}')[github.ref_name] || 'dev' }}
+    AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
 run-name: >
-    Deployment ${{ github.ref_name }} into ${{ fromJSON('{"develop":"nonprod","main:"prod"}')[github.ref_name] || 'dev' }} 
+    Deployment ${{ github.ref_name }} into ${{ fromJSON('{"develop":"nonprod","main":"prod"}')[github.ref_name] || 'dev' }} 
     triggered by ${{ github.event_name }}
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+      
     steps:
       - name: checkout
         uses: actions/checkout@v4
+
+      - name: Azure Login
+        uses: azure/login@v2 
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ env.AZURE_SUBSCRIPTION_ID }}
 
       - name: terraform apply landing zone
         uses: wnadim92/azure-employee-tracking-system/.github/actions/terraform-deploy@main
@@ -29,12 +35,11 @@ jobs:
           TARGET_ENVIRONMENT: ${{ env.ENV }}
           CHECKOUT_PATH: .
           WORKING_DIRECTORY: 'terraform/src'
+        env:
+          ARM_SUBSCRIPTION_ID: ${{ env.AZURE_SUBSCRIPTION_ID }}
 
-      - name: terraform apply landing zone
-        uses: wnadim92/azure-employee-tracking-system/.github/actions/react-appsvc-deloyy@main
+      - name: Deploy React app onto Azure App Service
+        uses: wnadim92/azure-employee-tracking-system/.github/actions/react-appsvc-deploy@main
         with:
           TARGET_ENVIRONMENT: ${{ env.ENV }}
-          CHECKOUT_PATH: .
-          WORKING_DIRECTORY: 'terraform/src'
-
-        
+          APP_SVC_NAME: "emptrack-${{ env.ENV }}-eastus2-appsvc"
