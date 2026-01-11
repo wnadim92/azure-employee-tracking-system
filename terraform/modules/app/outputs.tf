@@ -8,7 +8,7 @@ output "vnet_name" {
   description = "The name of the Virtual Network."
 }
 
-output "primary_region_vnet_address_spaces" {
+output "vnet_address_spaces" {
   value       = module.vnet.vnet_address_spaces
   description = "The address spacse assigned to the Virtual Network."
 }
