@@ -10,14 +10,24 @@ variable "region" {
   default     = "eastus"
 }
 
-variable "nsg_name" {
-  type        = string
-  description = "The name of the Azure Network Security Group. Used as a firewall on a subnet or a VM NIC" 
-  default     = "nsg"
-}
-
 variable "subnet_type" {
   type        = string
   description = "Public facing or private facing subnet. (public or private). Based off selection, sets up NSG to block public IPs and allow ports internally. Otherwise only http ports allowed and external IPs are allowed for public"
   default     = "private"
+}
+
+variable "subnet_name" {
+  type        = string
+  description = "The name of the subnet."  
+  default     = "internal-subnet"
+}
+
+variable "cidr" {
+  type        = string
+  description = "The cidr for the subnet."
+}
+
+variable "vnet_name" {
+  type        = string
+  description = "The name of the virtual network this subnet belongs to."
 }
