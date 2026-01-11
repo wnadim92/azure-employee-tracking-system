@@ -1,0 +1,26 @@
+version: '3.8'
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: local_postgres
+    environment:
+      POSTGRES_USER: local_user
+      POSTGRES_PASSWORD: local_password
+      POSTGRES_DB: local_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./db_init:/docker-entrypoint-initdb.d
+
+  api:
+    build: .
+    container_name: fastapi_backend
+    ports:
+      - "7071:80"  # Map Azure Function port (80 in container) to 7071 on host
+    environment:
+      # Use "db" (service name) instead of "localhost"
+      - DATABASE_URL=postgres://local_user:local_password@db:5432/local_db
+      - DB_SSL_MODE=disable
+      - AzureWebJobsStorage=UseDevelopmentStorage=false
+    depends_on:
+      - db
