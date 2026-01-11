@@ -6,6 +6,7 @@ on:
 env:
     ENV: ${{ fromJSON('{"develop":"nonprod","main":"prod"}')[github.ref_name] || 'dev' }}
     AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+    MULTIREGION: false
 
 run-name: >
     Deployment ${{ github.ref_name }} into ${{ fromJSON('{"develop":"nonprod","main":"prod"}')[github.ref_name] || 'dev' }} 
@@ -38,8 +39,14 @@ jobs:
         env:
           ARM_SUBSCRIPTION_ID: ${{ env.AZURE_SUBSCRIPTION_ID }}
 
-      - name: Deploy React app onto Azure App Service
+      - name: Deploy React Front End onto Azure App Service
         uses: wnadim92/azure-employee-tracking-system/.github/actions/react-appsvc-deploy@main
+        with:
+          TARGET_ENVIRONMENT: ${{ env.ENV }}
+          APP_SVC_NAME: "emptrack-${{ env.ENV }}-appsvc"
+
+      - name: Deploy FastAPI Python Backend on Function App
+        uses: wnadim92/azure-employee-tracking-system/.github/actions/docker-build-funcapp-deploy@main
         with:
           TARGET_ENVIRONMENT: ${{ env.ENV }}
           APP_SVC_NAME: "emptrack-${{ env.ENV }}-eastus2-appsvc"
