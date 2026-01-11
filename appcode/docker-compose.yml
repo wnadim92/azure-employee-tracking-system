@@ -1,4 +1,3 @@
-version: '3.8'
 services:
   db:
     image: postgres:15-alpine
@@ -10,17 +9,26 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - ./db_init:/docker-entrypoint-initdb.d
+      # Adjusted path to match root location
+      - ./backend/db_init:/docker-entrypoint-initdb.d:ro
 
   api:
-    build: .
+    build:
+      context: ./backend  # Looks for Dockerfile inside backend folder
     container_name: fastapi_backend
     ports:
-      - "7071:80"  # Map Azure Function port (80 in container) to 7071 on host
+      - "7071:80"
     environment:
-      # Use "db" (service name) instead of "localhost"
       - DATABASE_URL=postgres://local_user:local_password@db:5432/local_db
       - DB_SSL_MODE=disable
-      - AzureWebJobsStorage=UseDevelopmentStorage=false
     depends_on:
       - db
+
+  frontend:
+    build:
+      context: ./frontend  # Looks for Dockerfile inside frontend folder
+    container_name: react_frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - api
