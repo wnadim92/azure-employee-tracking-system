@@ -8,6 +8,7 @@ module "emp_track_middletier_pe_snet" {
   subnet_name = "${var.project_name}-${var.environment}-${var.region}-btier-pe-snet"
   rg_name     = module.rg.rg_name
   vnet_name   = module.vnet.vnet_name
+  region      = var.region  
 }
 
 #middle tier vnet integration subnet
@@ -18,6 +19,7 @@ module "emp_track_middletier_vnetintegration_snet" {
   subnet_name = "${var.project_name}-${var.environment}-${var.region}-front-vnetinteg-snet"
   rg_name     = module.rg.rg_name
   vnet_name   = module.vnet.vnet_name
+  region      = var.region
 }
 
 #db subnet
@@ -28,4 +30,5 @@ module "emp_track_db_snet" {
   subnet_name = "${var.project_name}-${var.environment}-${var.region}-db-snet"
   rg_name     = module.rg.rg_name
   vnet_name   = module.vnet.vnet_name
+  region      = var.region
 }
