@@ -1,9 +1,42 @@
 name: 'Terraform Deploy'
-description: 'Deploys terraform'
+description: 'Runs terraform init, plan, and apply dynamically'
 inputs:
-    APP_SVC_NAME:
-        description: 'The App Service the React Application will be deployed onto'
-        required: true
-    TARGET_ENVIRONMENT:
-        description: 'The target environment to deploy towards (dev, uat, prod)'
-        required: true
+  TF_VERSION:
+    description: 'The Terraform version to use'
+    required: false 
+    default: 1.13.4 
+  TARGET_ENVIRONMENT:
+    description: 'The target environment to deploy towards (dev, uat, prod)'
+    required: false
+  REGION:
+    description: 'The data center region to deply to'
+    required: true
+  GIT_REPOSITORY_NAME:
+    description: 'The git repository name for the terraform repo'
+    required: true
+  GITHUB_TOKEN:
+    description: 'The token for GitHub to have permissions to checkout repositories if not public'
+    required: false
+  GIT_REPOSITORY_REF:
+    description: 'The branch name for the terraform repo'
+    required: false
+    default: main
+  CHECKOUT_PATH:
+    description: 'The path to run the terraform from within the terraform repository`'
+    required: true 
+
+runs:
+    using: "composite"
+    steps:
+    - name: checkout terraform infrastructure repo
+      uses: actions/checkout@v4
+      with:
+        repository: ${{ inputs.GIT_REPOSITORY_NAME }}
+        token: ${{ inputs.GITHUB_TOKEN }}
+        path: ${{ inputs.CHECKOUT_PATH }}
+        ref: ${{ inputs.GIT_REPOSITORY_REF }}
+
+    - name: setup terraform
+      uses: hashicorp/setup-terraform@v2
+      with:
+        terraform_version: ${{ inputs.TF_VERSION }}

@@ -1,12 +1,16 @@
 name: 'React App Service Deploy'
 description: 'Builds a React Appication and Deploys it onto Azure App Service'
 inputs:
-    APP_SVC_NAME:
-        description: 'The App Service the React Application will be deployed onto'
-        required: true
-    TARGET_ENVIRONMENT:
-        description: 'The target environment to deploy towards (dev, uat, prod)'
-        required: true
+  APP_SVC_NAME:
+    description: 'The App Service the React Application will be deployed onto'
+    required: true
+  TARGET_ENVIRONMENT:
+    description: 'The target environment to deploy towards (dev, uat, prod)'
+    required: true
+  NODE_VERSION:
+    description: 'The node version'
+    required: false
+    default: 16.14.0
 
 runs:
     using: "composite"
@@ -14,7 +18,7 @@ runs:
         - name: setting up node
           uses: actions/setup-node@4
           with:
-            node-version: 16.14.0
+            node-version: ${{ inputs.NODE_VERSION }}
 
         - name: cache npm dependencies
           id: cache-npm
@@ -42,4 +46,4 @@ runs:
 
         - name: deploy
           shell: bash
-          run: <placeholder>          
+          run: TODO ${{ inputs.APP_SVC_NAME }} ${{ inputs.TARGET_ENVIRONMENT }}
