@@ -1,36 +1,43 @@
-name: Deploy Infrastructure and Three Tier App
+name: Deploy Infrastructure and Three Tier App for Employee Tracking Web Application
 
 on:
-    workflow_dispatch:      
+  workflow_dispatch:
+    inputs:
+      multiregion:
+        description: 'Enable Multi-Region Deployment?'
+        type: boolean
+        default: false
+
+permissions:
+  id-token: write
+  contents: read
 
 env:
-    ENV: ${{ fromJSON('{"develop":"nonprod","main":"prod"}')[github.ref_name] || 'dev' }}
-    AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-    MULTIREGION: false
+  ENV: ${{ fromJSON('{"develop":"nonprod","main":"prod"}')[github.ref_name] || 'dev' }}
+  AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+  PRIMARY_REGION: "eastus2"
+  SECONDARY_REGION: "westus2" 
+  SERVICE_NAME: employeetracking
 
 run-name: >
-    Deployment ${{ github.ref_name }} into ${{ fromJSON('{"develop":"nonprod","main":"prod"}')[github.ref_name] || 'dev' }} 
-    triggered by ${{ github.event_name }}
+  Deployment (${{ github.ref_name }}) to ${{ fromJSON('{"develop":"nonprod","main":"prod"}')[github.ref_name] || 'dev' }} 
+  (MultiRegion: ${{ inputs.multiregion }})
 
 jobs:
-  build-and-deploy:
+  provision-infra:
     runs-on: ubuntu-latest
-    permissions:
-      id-token: write
-      contents: read
-      
     steps:
-      - name: checkout
+      - name: Checkout
         uses: actions/checkout@v4
 
       - name: Azure Login
-        uses: azure/login@v2 
+        uses: azure/login@v2
         with:
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ env.AZURE_SUBSCRIPTION_ID }}
 
-      - name: terraform apply landing zone
+      - name: Terraform Apply
         uses: wnadim92/azure-employee-tracking-system/.github/actions/terraform-deploy@main
         with:
           TARGET_ENVIRONMENT: ${{ env.ENV }}
@@ -38,15 +45,54 @@ jobs:
           WORKING_DIRECTORY: 'terraform/src'
         env:
           ARM_SUBSCRIPTION_ID: ${{ env.AZURE_SUBSCRIPTION_ID }}
+          TF_VAR_shouldBeMultiRegion: ${{ inputs.multiregion }}
+          TF_VAR_secondary_region: ${{ env.SECONDARY_REGION }}
 
-      - name: Deploy React Front End onto Azure App Service
+  generate-matrix:
+    runs-on: ubuntu-latest
+    outputs:
+      regions: ${{ steps.set-matrix.outputs.regions }}
+    steps:
+      - id: set-matrix
+        run: |
+          if [[ "${{ inputs.multiregion }}" == "true" ]]; then
+            echo 'regions=["${{ env.PRIMARY_REGION }}", "${{ env.SECONDARY_REGION }}"]' >> $GITHUB_OUTPUT
+          else
+            echo 'regions=["${{ env.PRIMARY_REGION }}"]' >> $GITHUB_OUTPUT
+          fi
+
+  deploy-apps:
+    needs: [provision-infra, generate-matrix]
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        region: ${{ fromJSON(needs.generate-matrix.outputs.regions) }}
+      # Don't cancel other regions if one fails
+      fail-fast: false 
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ env.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Deploy React App (${{ matrix.region }})
         uses: wnadim92/azure-employee-tracking-system/.github/actions/react-appsvc-deploy@main
         with:
           TARGET_ENVIRONMENT: ${{ env.ENV }}
-          APP_SVC_NAME: "emptrack-${{ env.ENV }}-appsvc"
+          APP_SVC_NAME: "emptrack-${{ env.ENV }}-${{ matrix.region }}-appsvc"
 
-      - name: Deploy FastAPI Python Backend on Function App
+      - name: Deploy Python Function (${{ matrix.region }})
         uses: wnadim92/azure-employee-tracking-system/.github/actions/docker-build-funcapp-deploy@main
         with:
           TARGET_ENVIRONMENT: ${{ env.ENV }}
-          APP_SVC_NAME: "emptrack-${{ env.ENV }}-eastus2-appsvc"
+          FUNC_APP_NAME: "emptrack-${{ env.ENV }}-${{ matrix.region }}-func"
+          REGISTRY_LOGIN_SERVER: ${{ secrets.REGISTRY_LOGIN_SERVER }} 
+          REGISTRY_USERNAME: ${{ secrets.REGISTRY_USERNAME }}
+          REGISTRY_PASSWORD: ${{ secrets.REGISTRY_PASSWORD }}
+          IMAGE_NAME: "backend-api"
