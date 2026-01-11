@@ -1,0 +1,5 @@
+fastapi
+uvicorn[standard]
+asyncpg
+azure-functions
+pydantic

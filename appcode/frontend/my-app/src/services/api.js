@@ -24,3 +24,21 @@ export const saveEmployee = async (employee) => {
     }, 500);
   });
 };
+
+
+// const API_URL = process.env.REACT_APP_API_BASE_URL;
+
+// export const getEmployees = async () => {
+//   const response = await fetch(`${API_URL}/employees`);
+//   if (!response.ok) throw new Error("Failed to fetch employees");
+//   return await response.json();
+// };
+
+// export const saveEmployee = async (employee) => {
+//   const response = await fetch(`${API_URL}/employee`, {
+//     method: "POST",
+//     headers: { "Content-Type": "application/json" },
+//     body: JSON.stringify(employee),
+//   });
+//   return await response.json();
+// };

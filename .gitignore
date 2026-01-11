@@ -62,3 +62,13 @@ yarn-error.log*
 *.swp
 
 # FastAPI
+
+# Azure Functions local settings (contains secrets/DB strings)
+local.settings.json
+
+# Internal Azure tool artifacts
+.python_packages/
+obj/
+bin/
+.azurefunctions/
+.vscode/
