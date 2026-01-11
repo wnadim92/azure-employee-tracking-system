@@ -1,8 +1,8 @@
-project_name                                                         = "emp-track"
-prmary_region                                                        = "eastus"
+project_name                                                         = "emptrack"
 environment                                                          = "nonprod"
 
 #primary region
+prmary_region                                                        = "eastus"
 prmary_region_vnet_address_spaces                                    = ["10.1.0.0/16"]
 prmary_region_dns_servers                                            = ["8.8.8.8","1.1.1.1"]
 prmary_region_emp_track_frontend_appgw_snet_cidr                     = "10.1.0.0/24"
@@ -11,3 +11,4 @@ prmary_region_emp_track_frontend_vnetintegration_snet_cidr           = "10.1.1.3
 prmary_region_emp_track_middletier_pe_snet_cidr                      = "10.1.1.64/27"
 prmary_region_emp_track_middletier_vnetintegration_snet_cidr         = "10.1.1.96/27"
 prmary_region_emp_track_db_snet_cidr                                 = "10.1.1.128/27"
+

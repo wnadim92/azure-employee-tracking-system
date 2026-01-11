@@ -1,6 +1,6 @@
 variable "project_name" {
   type        = string
-  description = "The name of the resource group."
+  description = "The name of the project."
   default     = "platform"
 }
 
