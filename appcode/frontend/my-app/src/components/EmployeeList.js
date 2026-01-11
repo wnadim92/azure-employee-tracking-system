@@ -11,8 +11,9 @@ export default function EmployeeList({ employees, onEdit }) {
           <thead>
             <tr>
               <th>Name</th>
-              <th>Address</th>
-              <th>DOB</th>
+              <th>Role</th> 
+              <th>Manager</th>
+              <th>Hire Date</th>
               <th>Actions</th>
             </tr>
           </thead>
@@ -20,8 +21,9 @@ export default function EmployeeList({ employees, onEdit }) {
             {employees.map((emp) => (
               <tr key={emp.id}>
                 <td>{emp.name}</td>
-                <td>{emp.address}</td>
-                <td>{emp.dob}</td>
+                <td>{emp.role}</td>
+                <td>{emp.manager || 'N/A'}</td> {/* Display N/A if null */}
+                <td>{emp.hireDate}</td>
                 <td>
                   <button onClick={() => onEdit(emp)} className="btn-sm">Edit</button>
                 </td>

@@ -2,13 +2,12 @@ import React, { useState, useEffect } from 'react';
 import EmployeeList from './components/EmployeeList';
 import EmployeeForm from './components/EmployeeForm';
 import { getEmployees, saveEmployee } from './services/api';
-import './App.css';
+// The import './App.css' is not needed here as we moved it to index.js
 
 function App() {
   const [employees, setEmployees] = useState([]);
   const [editingEmployee, setEditingEmployee] = useState(null);
 
-  // Load data on startup
   useEffect(() => {
     refreshData();
   }, []);
@@ -20,8 +19,8 @@ function App() {
 
   const handleSave = async (employee) => {
     await saveEmployee(employee);
-    setEditingEmployee(null); // Clear edit mode
-    refreshData(); // Reload list
+    setEditingEmployee(null); 
+    refreshData(); 
   };
 
   return (
@@ -31,7 +30,6 @@ function App() {
       </header>
       
       <div className="main-content">
-        {/* Left: Form */}
         <div className="section">
           <EmployeeForm 
             currentEmployee={editingEmployee} 
@@ -40,7 +38,6 @@ function App() {
           />
         </div>
 
-        {/* Right: List */}
         <div className="section">
           <EmployeeList 
             employees={employees} 
