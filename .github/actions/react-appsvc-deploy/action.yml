@@ -28,3 +28,18 @@ runs:
                 ${{ runner.os }}-build-${{ env.cache-name }}-
                 ${{ runner.os }}-build-
                 ${{ runner.os }}-
+
+        - name: install node
+          shell: bash
+          run: |
+            npm install
+
+        - name: build 
+          shell: bash
+          run: |
+            echo "buliding react app"
+            npm run build  
+
+        - name: deploy
+          shell: bash
+          run: <placeholder>          

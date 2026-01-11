@@ -1,0 +1,9 @@
+name: 'Terraform Deploy'
+description: 'Deploys terraform'
+inputs:
+    APP_SVC_NAME:
+        description: 'The App Service the React Application will be deployed onto'
+        required: true
+    TARGET_ENVIRONMENT:
+        description: 'The target environment to deploy towards (dev, uat, prod)'
+        required: true
