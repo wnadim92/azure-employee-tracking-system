@@ -30,11 +30,11 @@ jobs:
           CHECKOUT_PATH: .
           WORKING_DIRECTORY: 'terraform/src'
 
-          - name: terraform apply landing zone
-          uses: wnadim92/azure-employee-tracking-system/.github/actions/react-appsvc-deloyy@main
-          with:
-            TARGET_ENVIRONMENT: ${{ env.ENV }}
-            CHECKOUT_PATH: .
-            WORKING_DIRECTORY: 'terraform/src'
+      - name: terraform apply landing zone
+        uses: wnadim92/azure-employee-tracking-system/.github/actions/react-appsvc-deloyy@main
+        with:
+          TARGET_ENVIRONMENT: ${{ env.ENV }}
+          CHECKOUT_PATH: .
+          WORKING_DIRECTORY: 'terraform/src'
 
         
