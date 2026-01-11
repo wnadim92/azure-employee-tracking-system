@@ -1,11 +1,11 @@
 output "vnet_id" {
   value       = azurerm_virtual_network.vnet.id
-  description = "The unique ID of the created Virtual Network."
+  description = "The unique ID of the provisioned Virtual Network."
 }
 
 output "vnet_name" {
   value       = azurerm_virtual_network.vnet.name
-  description = "The name of the created Virtual Network."
+  description = "The name of the provisioned Virtual Network."
 }
 
 output "vnet_address_spaces" {
