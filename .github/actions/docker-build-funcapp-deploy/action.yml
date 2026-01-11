@@ -1,0 +1,40 @@
+name: 'Docker Build and Deploy to Azure Function App'
+description: 'Builds a Docker Container and deploy to Azure Function App'
+inputs:
+  isDockerHub:
+    description: 'If deploying to DockerHub'
+    required: false
+  isACR:
+    description: 'If Deploying to Azure Container Registry'
+    required: false
+  FUNC_APP_NAME:
+    description: 'The Function App name'
+    required: true
+  TARGET_ENVIRONMENT:
+    description: 'The target environment (nonprod, prod)'
+    required: true
+
+runs:
+    using: "composite"
+    steps:
+        - name: setting up node
+          uses: actions/setup-node@v4 
+          with:
+            node-version: ${{ inputs.NODE_VERSION }}
+            cache: 'npm' 
+
+        - name: install dependencies
+          shell: bash
+          run: npm ci 
+
+        - name: build 
+          shell: bash
+          run: |
+            echo "building react app"
+            npm run build  
+
+        - name: deploy to azure
+          uses: azure/webapps-deploy@v3 
+          with:
+            app-name: ${{ inputs.APP_SVC_NAME }}
+            package: './build' 
