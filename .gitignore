@@ -72,3 +72,30 @@ obj/
 bin/
 .azurefunctions/
 .vscode/
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+venv/
+.venv/
+env/
+.env
+
+# Distribution / packaging
+dist/
+build/
+*.egg-info/
+
+# Docker
+.dockerignore
+
+# If you mount a local folder for Postgres data, ignore it
+pgdata/
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
