@@ -7,23 +7,13 @@ inputs:
     default: 1.13.4 
   TARGET_ENVIRONMENT:
     description: 'The target environment to deploy towards (dev, uat, prod)'
-    required: false
-  REGION:
-    description: 'The data center region to deply to'
     required: true
-  GIT_REPOSITORY_NAME:
-    description: 'The git repository name for the terraform repo'
-    required: true
-  GITHUB_TOKEN:
-    description: 'The token for GitHub to have permissions to checkout repositories if not public'
-    required: false
-  GIT_REPOSITORY_REF:
-    description: 'The branch name for the terraform repo'
-    required: false
-    default: main
   CHECKOUT_PATH:
-    description: 'The path to run the terraform from within the terraform repository`'
-    required: true 
+    description: 'The path of where to checkout the terraform`'
+    required: false 
+  WORKING_DIRECTORY:
+    description: 'The path of where to build terraform from`'
+    required: false 
 
 runs:
     using: "composite"
@@ -33,6 +23,16 @@ runs:
       with:
         terraform_version: ${{ inputs.TF_VERSION }}
 
-    - name: run terraform deployment
+
+    - name: deploy terraform
       shell: bash
-      working-directory: ${{ inputs.CHECKOUT_PATH }}
+      working-directory: ${{ inputs.CHECKOUT_PATH }}/${{ inputs.WORKING_DIRECTORY }}
+      run: |
+        terraform init --backend-config=${{ inputs.TARGET_ENVIRONMENT }}/terraform.tfbackend
+
+        echo "Running terraform plan..."
+        terraform plan -var-file="${{ inputs.TARGET_ENVIRONMENT }}/terraform.tfvars" -out=tflan
+
+        echo "Running terraform apply..."
+        terraform apply -auto-approve tfplan
+      
