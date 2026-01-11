@@ -18,7 +18,7 @@ module "app_secondary_region" {
     count                                                = var.shouldBeMultiRegion == true ? 1 : 0
     source                                               = "../modules/app"
     project_name                                         = var.project_name
-    region                                               = var.primary_region
+    region                                               = var.secondary_region
     environment                                          = var.environment
     vnet_address_spaces                                  = var.secondary_region_vnet_address_spaces
     dns_servers                                          = var.secondary_region_dns_servers
