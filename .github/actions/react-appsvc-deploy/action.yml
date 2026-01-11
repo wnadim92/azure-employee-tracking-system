@@ -1,49 +1,38 @@
 name: 'React App Service Deploy'
-description: 'Builds a React Appication and Deploys it onto Azure App Service'
+description: 'Builds a React Application and Deploys it onto Azure App Service'
 inputs:
   APP_SVC_NAME:
-    description: 'The App Service the React Application will be deployed onto'
+    description: 'The App Service name'
     required: true
   TARGET_ENVIRONMENT:
-    description: 'The target environment to deploy towards (dev, uat, prod)'
+    description: 'The target environment (nonprod, prod)'
     required: true
   NODE_VERSION:
-    description: 'The node version'
+    description: 'Node version'
     required: false
-    default: 16.14.0
+    default: "22.x"
 
 runs:
     using: "composite"
     steps:
         - name: setting up node
-          uses: actions/setup-node@4
+          uses: actions/setup-node@v4 
           with:
             node-version: ${{ inputs.NODE_VERSION }}
+            cache: 'npm' 
 
-        - name: cache npm dependencies
-          id: cache-npm
-          uses: actions/cache@4
-          env:
-            cache-name: cache-node-modules
-          with:
-            path: ~/.nm
-            key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
-            restore-keys: |
-                ${{ runner.os }}-build-${{ env.cache-name }}-
-                ${{ runner.os }}-build-
-                ${{ runner.os }}-
-
-        - name: install node
+        - name: install dependencies
           shell: bash
-          run: |
-            npm install
+          run: npm ci 
 
         - name: build 
           shell: bash
           run: |
-            echo "buliding react app"
+            echo "building react app"
             npm run build  
 
-        - name: deploy
-          shell: bash
-          run: TODO ${{ inputs.APP_SVC_NAME }} ${{ inputs.TARGET_ENVIRONMENT }}
+        - name: deploy to azure
+          uses: azure/webapps-deploy@v3 
+          with:
+            app-name: ${{ inputs.APP_SVC_NAME }}
+            package: './build' 

@@ -4,35 +4,36 @@ inputs:
   TF_VERSION:
     description: 'The Terraform version to use'
     required: false 
-    default: 1.13.4 
+    default: "1.14.3" # Updated to latest 2026 version
   TARGET_ENVIRONMENT:
-    description: 'The target environment to deploy towards (dev, uat, prod)'
+    description: 'Target environment (nonprod, prod)'
     required: true
   CHECKOUT_PATH:
-    description: 'The path of where to checkout the terraform`'
-    required: false 
+    description: 'Path for checkout'
+    required: false
+    default: '.'
   WORKING_DIRECTORY:
-    description: 'The path of where to build terraform from`'
-    required: false 
+    description: 'Root of terraform src'
+    required: true
 
 runs:
-    using: "composite"
-    steps:
+  using: "composite"
+  steps:
     - name: setup terraform
-      uses: hashicorp/setup-terraform@v2
+      uses: hashicorp/setup-terraform@v3 # Updated to v3
       with:
         terraform_version: ${{ inputs.TF_VERSION }}
-
 
     - name: deploy terraform
       shell: bash
       working-directory: ${{ inputs.CHECKOUT_PATH }}/${{ inputs.WORKING_DIRECTORY }}
       run: |
-        terraform init --backend-config=${{ inputs.TARGET_ENVIRONMENT }}/terraform.tfbackend
+        # Use -reconfigure to ensure backend stays fresh
+        terraform init -reconfigure -backend-config="${{ inputs.TARGET_ENVIRONMENT }}/terraform.tfbackend"
 
         echo "Running terraform plan..."
-        terraform plan -var-file="${{ inputs.TARGET_ENVIRONMENT }}/terraform.tfvars" -out=tflan
+        # Fixed typo: changed -out=tflan to -out=tfplan
+        terraform plan -var-file="${{ inputs.TARGET_ENVIRONMENT }}/terraform.tfvars" -out=tfplan
 
         echo "Running terraform apply..."
         terraform apply -auto-approve tfplan
-      
