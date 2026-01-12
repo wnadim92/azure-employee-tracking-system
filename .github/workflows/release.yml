@@ -51,7 +51,7 @@ jobs:
           REGISTRY_USERNAME: ${{ secrets.REGISTRY_USERNAME }}
           REGISTRY_PASSWORD: ${{ secrets.REGISTRY_PASSWORD }}
           IMAGE_NAME: "emptrack-frontend"
-          PROJECT_PATH: 'appcode/frontend'           
+          PROJECT_PATH: 'appcode/frontend'    
 
       # - name: Build React App
       #   uses: wnadim92/azure-employee-tracking-system/.github/actions/docker-build@main
