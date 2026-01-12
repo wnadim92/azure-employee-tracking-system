@@ -28,7 +28,7 @@ module "pe" {
     region                         = var.region
     subnet_id                      = var.subnet_id
     private_connection_resource_id = azurerm_cosmosdb_account.this.id
-    pe_subresource_type            = ["Sql"]
+    pe_subresource_type            = "Sql"
     private_dns_zone_id            = var.private_dns_zone_id
 }
 
@@ -49,7 +49,7 @@ resource "azurerm_cosmosdb_sql_container" "this" {
   resource_group_name = var.rg_name
   account_name        = azurerm_cosmosdb_account.this.name
   database_name       = azurerm_cosmosdb_sql_database.this.name
-  partition_key_path  = "/id"
+  partition_key_paths = ["/id"]
   }
 
 # 4. Resolve and Assign Built-in Data Role

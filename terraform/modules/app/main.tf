@@ -5,7 +5,7 @@ module "emp_track_frontend_appsvc" {
   app_svc_name                         = "${var.project_name}-${var.environment}-${var.region}-appsvc"
   vnet_integration_subnet_id           = module.emp_track_frontend_vnetintegration_snet.subnet_id
   uami_resource_id                     = module.emp_track_managed_identity.uami_id
-  rg_name                              = var.rg_name
+  rg_name                              = module.rg.rg_name
   region                               = var.region
   docker_registry_url                  = var.docker_registry_url
   image_name                           = var.frontend_image_name

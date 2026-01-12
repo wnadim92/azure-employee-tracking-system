@@ -25,8 +25,7 @@ resource "azurerm_linux_web_app" "this" {
     vnet_route_all_enabled = true
     
     application_stack {
-      docker_image_name = "${var.docker_registry_url}/${var.image_name}"
-      docker_image_tag  = "latest"
+      docker_image_name = "${var.docker_registry_url}/${var.image_name}:latest"
     }
   }
 

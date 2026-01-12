@@ -1,3 +1,9 @@
+variable "rg_name" {
+  type        = string
+  description = "The name of the resource group."
+  default     = "rg"
+}
+
 
 variable "app_svc_name" {
   type        = string
@@ -9,12 +15,6 @@ variable "docker_registry_url" {
 
 variable "image_name" {
     type = string
-}
-
-variable "rg_name" {
-  type        = string
-  description = "The name of the resource group."
-  default     = "rg"
 }
 
 variable "region" {

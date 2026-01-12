@@ -41,8 +41,11 @@ resource "azurerm_linux_function_app" "this" {
     
     # IF USING DOCKER:
     application_stack {
-      docker_image_name = "${var.docker_registry_url}/${var.image_name}"
-      docker_image_tag  = "latest"
+      docker {
+        registry_url = var.docker_registry_url
+        image_name   = var.image_name
+        image_tag    = "latest"
+      }
     }
     
     # IF NOT USING DOCKER (Python):
@@ -60,7 +63,7 @@ module "pe" {
   region                         = var.region
   subnet_id                      = var.pe_subnet_id
   private_connection_resource_id = azurerm_linux_function_app.this.id
-  pe_subresource_type            = ["sites"]
+  pe_subresource_type            = "sites"
   private_dns_zone_id            = var.sites_dns_zone_id
 }
 
