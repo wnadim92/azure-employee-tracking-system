@@ -63,13 +63,3 @@ runs:
         push: true
         tags: ${{ inputs.REGISTRY_USERNAME }}/${{ inputs.IMAGE_NAME }}:${{ inputs.IMAGE_TAG }}
         build-args: ${{ inputs.BUILD_ARGS }}
-
-    # - name: Build and Push Docker Image
-    #   shell: bash
-    #   run: |
-    #     FULL_IMAGE_PATH="${{ inputs.REGISTRY_LOGIN_SERVER }}/${{ inputs.IMAGE_NAME }}:${{ inputs.IMAGE_TAG }}"
-        
-    #     docker build -t $FULL_IMAGE_PATH -f ${{ inputs.PROJECT_PATH }}/Dockerfile ${{ inputs.PROJECT_PATH }}
-        
-    #     docker push $FULL_IMAGE_PATH
-    #     echo "FULL_IMAGE_PATH=$FULL_IMAGE_PATH" >> $GITHUB_ENV
