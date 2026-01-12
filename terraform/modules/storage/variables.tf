@@ -1,4 +1,9 @@
 
+variable "strg_name" {
+  type        = string
+  description = "The name of the storage account."
+}
+
 variable "rg_name" {
   type        = string
   description = "The name of the resource group."
@@ -32,3 +37,7 @@ variable "queue_dns_zone_id" {
   type        = string
 }
 
+variable "principal_id" {
+  type        = string
+  description = "The id of the user assigned managed identity's princpal."
+}

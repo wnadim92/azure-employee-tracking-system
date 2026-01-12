@@ -6,7 +6,6 @@ resource "azurerm_cosmosdb_account" "this" {
   offer_type          = "Standard"
   kind                = "GlobalDocumentDB"
 
-  # ENABLE FREE TIER (1000 RU/s + 25GB Storage Free)
   free_tier_enabled = true 
 
   public_network_access_enabled = false
@@ -65,6 +64,6 @@ resource "azurerm_cosmosdb_sql_role_assignment" "this" {
   resource_group_name = var.rg_name
   account_name        = azurerm_cosmosdb_account.this.name
   role_definition_id  = data.azurerm_cosmosdb_sql_role_definition.data_contributor.id
-  principal_id        = var.backend_principal_id
+  principal_id        = var.principal_id
   scope               = azurerm_cosmosdb_account.this.id
 }
