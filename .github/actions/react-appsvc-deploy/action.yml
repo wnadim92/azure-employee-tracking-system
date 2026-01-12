@@ -37,8 +37,8 @@ runs:
             npm run build  
           working-directory: ${{ inputs.PROJECT_PATH }}
 
-        - name: deploy to azure
-          uses: azure/webapps-deploy@v3 
-          with:
-            app-name: ${{ inputs.APP_SVC_NAME }}
-            package: '${{ inputs.PROJECT_PATH }}/build' 
+        # - name: deploy to azure
+        #   uses: azure/webapps-deploy@v3 
+        #   with:
+        #     app-name: ${{ inputs.APP_SVC_NAME }}
+        #     package: '${{ inputs.PROJECT_PATH }}/build' 
