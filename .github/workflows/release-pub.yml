@@ -28,8 +28,8 @@ permissions:
 
 env:
   ENV: ${{ github.event.inputs.environment }}
-  PRIMARY_REGION: "westus2"
-  SECONDARY_REGION: "westus"
+  PRIMARY_REGION: "centralindia"
+  SECONDARY_REGION: "southindia"
 
 run-name: >
   Deployment to ${{ github.event.inputs.environment }} 

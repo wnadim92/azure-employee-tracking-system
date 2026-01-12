@@ -20,7 +20,7 @@ variable "image_name" {
 variable "region" {
   type        = string
   description = "The Azure region where the resource group will be provisioned."
-  default     = "eastus"
+  default     = "centralindia"
 }
 
 variable "uami_resource_id" {
