@@ -10,6 +10,7 @@ from pydantic import BaseModel, Field
 
 # 2026 Azure SDKs
 from azure.cosmos.aio import CosmosClient
+from azure.cosmos import PartitionKey
 from azure.cosmos.exceptions import CosmosHttpResponseError
 from azure.identity.aio import DefaultAzureCredential
 from azure.core.exceptions import ResourceNotFoundError
@@ -26,14 +27,19 @@ async def lifespan(app: FastAPI):
     
     if key:
         logging.info("Connecting to Cosmos DB Emulator with key.")
-        client = CosmosClient(endpoint, credential=key)
+        # Disable SSL verification for local emulator
+        client = CosmosClient(endpoint, credential=key, connection_verify=False)
     else:
         logging.info("Connecting to Cosmos DB with Managed Identity.")
         credential = DefaultAzureCredential()
         client = CosmosClient(endpoint, credential=credential)
     
-    # Store the container client in app state
-    app.state.container = client.get_database_client(db_name).get_container_client("employees")
+    # Create Database and Container if they don't exist
+    database = await client.create_database_if_not_exists(id=db_name)
+    app.state.container = await database.create_container_if_not_exists(
+        id="employees", 
+        partition_key=PartitionKey(path="/id")
+    )
     logging.info("Cosmos DB Client initialized")
     
     yield

@@ -29,6 +29,7 @@ services:
       - AzureFunctionsJobHost__CORS__SupportCredentials=true
     depends_on:
       - cosmosdb
+    restart: on-failure
 
   frontend:
     build:
