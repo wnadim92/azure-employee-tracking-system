@@ -1,28 +1,17 @@
-#subnets
 
-# #front end public appgw subnet
-# module "emp_track_frontend_appgw_snet" {
-#     source      = "../../modules/subnet"
-#     subnet_type = "public"
-#     cidr        = var.emp_track_frontend_appgw_snet_cidr
-#     subnet_name = "${var.project_name}-${var.environment}-${var.region}-appgw-pub-snet" // emp-track-nonprod-appgw-pub-snet
-#     rg_name     = module.rg.rg_name
-#     vnet_name   = module.vnet.vnet_name
-#     region      = var.region        
-# }
+#front end app service React SPA
 
-# #front end private endpoint subnet
-# module "emp_track_frontend_pe_snet" {
-#     source      = "../../modules/subnet"
-#     subnet_type = "public"
-#     cidr        = var.emp_track_frontend_pe_snet_cidr
-#     subnet_name = "${var.project_name}-${var.environment}-${var.region}-front-pe-snet"
-#     rg_name     = module.rg.rg_name
-#     vnet_name   = module.vnet.vnet_name
-#     region      = var.region          
-# }
+module "emp_track_frontend_appsvc" {
+  source                               = "../../modules/appsvc"
+  app_svc_name                         = "${var.project_name}-${var.environment}-${var.region}-appsvc"
+  vnet_integration_subnet_id           = moddule.emp_track_frontend_vnetintegration_snet.subnet_id
+  uami_resource_id                     = module.emp_track_managed_identity.uami_id
+  rg_name                              = module.rg.rg_name
+  region                               = var.region
+  docker_registry_url                  = var.docker_registry_url
+  image_name                           = var.frontend_image_name
+}
 
-#front end vnet integration subnet
 module "emp_track_frontend_vnetintegration_snet" {
     source      = "../../modules/subnet"
     subnet_type = "private"

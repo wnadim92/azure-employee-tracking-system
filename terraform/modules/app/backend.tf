@@ -1,6 +1,5 @@
-#subnets
 
-#middle tier private endpoint subnet
+
 module "emp_track_middletier_pe_snet" {
   source      = "../../modules/subnet"
   subnet_type = "private"
@@ -11,7 +10,6 @@ module "emp_track_middletier_pe_snet" {
   region      = var.region  
 }
 
-#middle tier vnet integration subnet
 module "emp_track_middletier_vnetintegration_snet" {
   source      = "../../modules/subnet"
   subnet_type = "private"
@@ -23,7 +21,6 @@ module "emp_track_middletier_vnetintegration_snet" {
   delegation_service = "Microsoft.Web/serverFarms"
 }
 
-#db pe subnet
 module "emp_track_db_pe_snet" {
   source      = "../../modules/subnet"
   subnet_type = "private"
@@ -42,7 +39,6 @@ module "emp_track_managed_identity" {
   principal_name                       = "${var.project_name}-${var.environment}-${var.region}-sa"
 }
 
-# backend function app
 module "emp_track_middle_funcapp" {
   source                               = "../../modules/funcapp"
   funcapp_name                         = "${var.project_name}-${var.environment}-${var.region}-funcapp"
@@ -54,9 +50,10 @@ module "emp_track_middle_funcapp" {
   rg_name                              = module.rg.rg_name
   region                               = var.region
   cosmosdb_endpoint                    = module.emp_track_db.cosmosdb_endpoint
+  docker_registry_url                  = var.docker_registry_url
+  image_name                           = var.image_name
 }
 
-# cosmos db
 module "emp_track_db" {
   source                               = "../../modules/cosmosdb"
   subnet_id                            = modules.emp_track_db_pe_snet.subnet_id
@@ -66,7 +63,3 @@ module "emp_track_db" {
   private_dns_zone_id                  = azurerm_private_dns_zone.cosmos.name
   backend_principal_id                 = module.emp_track_managed_identity.principal_id
 }
-
-
-
-
