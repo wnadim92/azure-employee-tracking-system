@@ -23,11 +23,6 @@ variable "region" {
   default     = "eastus"
 }
 
-variable "vnet_integration_subnet_id" {
-  type        = string
-  description = "The subnet id to attach the pe to."
-}
-
 variable "uami_resource_id" {
   type        = string
 }
