@@ -24,7 +24,6 @@ env:
   ENV: ${{ github.event.inputs.environment }}
   PRIMARY_REGION: "eastus2"
   SECONDARY_REGION: "centralus"
-  SERVICE_NAME: employeetracking
 
 run-name: >
   Deployment to ${{ github.event.inputs.environment }} 
@@ -102,5 +101,5 @@ jobs:
           REGISTRY_LOGIN_SERVER: ${{ secrets.REGISTRY_LOGIN_SERVER }} 
           REGISTRY_USERNAME: ${{ secrets.REGISTRY_USERNAME }}
           REGISTRY_PASSWORD: ${{ secrets.REGISTRY_PASSWORD }}
-          IMAGE_NAME: "backend-api"
+          IMAGE_NAME: "emptrack-backend"
           PROJECT_PATH: 'appcode/backend'
