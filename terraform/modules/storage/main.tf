@@ -43,6 +43,6 @@ module "storage_pe" {
   region                         = var.region
   subnet_id                      = var.subnet_id
   private_connection_resource_id = azurerm_storage_account.this.id
-  pe_subresource_type            = [each.key]
-  private_dns_zone_id            = [each.value]
+  pe_subresource_type            = each.key
+  private_dns_zone_id            = each.value
 }

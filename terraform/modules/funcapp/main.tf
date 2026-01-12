@@ -70,7 +70,7 @@ module "pe" {
 # 1. The Storage Module (Infrastructure for the Function)
 module "storage" {
   source               = "../storage"
-  strg_name            = var.funcapp_name
+  strg_name            = lower(substr(replace(var.funcapp_name, "-", ""), 0, 24))
   rg_name              = var.rg_name
   region               = var.region
   subnet_id            = var.pe_subnet_id

@@ -31,6 +31,5 @@ resource "azurerm_linux_web_app" "this" {
 
   app_settings = {
     "WEBSITE_DNS_SERVER"     = "168.63.129.16" # Required for Azure DNS
-    "WEBSITE_VNET_ROUTE_ALL" = "1"
   }
 }

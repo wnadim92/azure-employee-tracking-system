@@ -25,11 +25,11 @@ module "emp_track_middle_funcapp" {
   cosmosdb_endpoint                    = module.emp_track_db.cosmosdb_endpoint
   docker_registry_url                  = var.docker_registry_url
   image_name                           = var.backend_image_name
-  sites_dns_zone_id                    = azurerm_private_dns_zone.web.name
-  blob_dns_zone_id                     = azurerm_private_dns_zone.blob.name
-  file_dns_zone_id                     = azurerm_private_dns_zone.file.name
-  table_dns_zone_id                    = azurerm_private_dns_zone.table.name
-  queue_dns_zone_id                    = azurerm_private_dns_zone.queue.name
+  sites_dns_zone_id                    = azurerm_private_dns_zone.web.id
+  blob_dns_zone_id                     = azurerm_private_dns_zone.blob.id
+  file_dns_zone_id                     = azurerm_private_dns_zone.file.id
+  table_dns_zone_id                    = azurerm_private_dns_zone.table.id
+  queue_dns_zone_id                    = azurerm_private_dns_zone.queue.id
 }
 
 module "emp_track_managed_identity" {
@@ -46,6 +46,6 @@ module "emp_track_db" {
   db_name                              = "${var.project_name}-${var.environment}-${var.region}-db"
   rg_name                              = module.rg.rg_name
   region                               = var.region
-  private_dns_zone_id                  = azurerm_private_dns_zone.cosmos.name
+  private_dns_zone_id                  = azurerm_private_dns_zone.cosmos.id
   principal_id                         = module.emp_track_managed_identity.principal_id
 }
