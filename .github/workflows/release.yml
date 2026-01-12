@@ -15,6 +15,10 @@ on:
         description: 'Enable Multi-Region Deployment?'
         type: boolean
         default: false
+      destroy:
+        description: 'Destroy Infrastructure?'
+        type: boolean
+        default: false
 
 permissions:
   id-token: write
@@ -83,8 +87,9 @@ jobs:
           TARGET_ENVIRONMENT: '${{ env.ENV }}'
           CHECKOUT_PATH: .
           WORKING_DIRECTORY: 'terraform/src'
+          REGION: ${{ env.PRIMARY_REGION }}
+          DESTROY: ${{ github.event.inputs.destroy }}
         env:
           ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
           TF_VAR_shouldBeMultiRegion: ${{ github.event.inputs.multiregion }}
           TF_VAR_secondary_region: ${{ env.SECONDARY_REGION }}
-          TF_VAR_region: ${{ env.PRIMARY_REGION }}

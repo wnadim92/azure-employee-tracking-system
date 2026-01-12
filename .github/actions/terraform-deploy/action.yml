@@ -15,6 +15,13 @@ inputs:
   WORKING_DIRECTORY:
     description: 'Root of terraform src'
     required: true
+  REGION:
+    description: 'Azure Region'
+    required: true
+  DESTROY:
+    description: 'Destroy resources'
+    required: false
+    default: 'false'
 
 runs:
   using: "composite"
@@ -27,13 +34,20 @@ runs:
     - name: deploy terraform
       shell: bash
       working-directory: ${{ inputs.CHECKOUT_PATH }}/${{ inputs.WORKING_DIRECTORY }}
+      env:
+        TF_VAR_region: ${{ inputs.REGION }}
       run: |
         # Use -reconfigure to ensure backend stays fresh
         terraform init -reconfigure -backend-config="${{ inputs.TARGET_ENVIRONMENT }}/terraform.tfbackend"
 
-        echo "Running terraform plan..."
-        # Fixed typo: changed -out=tflan to -out=tfplan
-        terraform plan -var-file="${{ inputs.TARGET_ENVIRONMENT }}/terraform.tfvars" -out=tfplan
+        if [ "${{ inputs.DESTROY }}" == "true" ]; then
+          echo "Running terraform DESTROY plan..."
+          terraform plan -destroy -var-file="${{ inputs.TARGET_ENVIRONMENT }}/terraform.tfvars" -out=tfplan
+        else
+          echo "Running terraform plan..."
+          # Fixed typo: changed -out=tflan to -out=tfplan
+          terraform plan -var-file="${{ inputs.TARGET_ENVIRONMENT }}/terraform.tfvars" -out=tfplan
+        fi
 
-        echo "Running terraform apply..."
-        #terraform apply -auto-approve tfplan
+        echo "Running terraform apply (or destroy)..."
+        terraform apply -auto-approve tfplan
