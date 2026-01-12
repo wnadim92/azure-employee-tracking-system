@@ -53,13 +53,6 @@ jobs:
           IMAGE_NAME: "wnadim92/emptrack-frontend"
           PROJECT_PATH: 'appcode/frontend'    
 
-      # - name: Build React App
-      #   uses: wnadim92/azure-employee-tracking-system/.github/actions/docker-build@main
-      #   with:
-      #     TARGET_ENVIRONMENT: ${{ env.ENV }}
-      #     PROJECT_PATH: 'appcode/frontend/my-app'
-      #     APP_SVC_NAME: "emptrack-${{ env.ENV }}-${{ matrix.region }}-appsvc"
-
       - name: Build FastAPI Backend
         uses: wnadim92/azure-employee-tracking-system/.github/actions/docker-build@main
         with:
@@ -68,18 +61,6 @@ jobs:
           REGISTRY_PASSWORD: ${{ secrets.REGISTRY_PASSWORD }}
           IMAGE_NAME: "wnadim92/emptrack-backend"
           PROJECT_PATH: 'appcode/backend'   
-
-      # - name: Deploy FastAPI Python Function (${{ matrix.region }})
-      #   uses: wnadim92/azure-employee-tracking-system/.github/actions/docker-build-funcapp-deploy@main
-      #   with:
-      #     TARGET_ENVIRONMENT: ${{ env.ENV }}
-      #     FUNC_APP_NAME: "emptrack-${{ env.ENV }}-${{ matrix.region }}-func"
-      #     REGISTRY_LOGIN_SERVER: ${{ secrets.REGISTRY_LOGIN_SERVER }} 
-      #     REGISTRY_USERNAME: ${{ secrets.REGISTRY_USERNAME }}
-      #     REGISTRY_PASSWORD: ${{ secrets.REGISTRY_PASSWORD }}
-      #     IMAGE_NAME: "emptrack-backend"
-      #     PROJECT_PATH: 'appcode/backend'
-
 
   provision-infra:
     needs: [build-images]  
