@@ -34,6 +34,10 @@ variable "cosmosdb_endpoint" {
   type        = string
 }
 
+variable "uami_resource_id" {
+  type        = string
+}
+
 variable "blob_dns_zone_id" {
   type        = string
 }

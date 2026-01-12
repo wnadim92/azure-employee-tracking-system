@@ -50,11 +50,12 @@ module "emp_track_middle_funcapp" {
   funcapp_name                         = "${var.project_name}-${var.environment}-${var.region}-funcapp"
   pe_subnet_id                         = modules.emp_track_middletier_pe_snet.subnet_id
   vnet_integration_subnet_id           = moddule.emp_track_middletier_vnetintegration_snet.subnet_id
-  db_name                              = "${var.project_name}-${var.environment}-${var.region}-db"
+  uami_resource_id                     = module.emp_track_managed_identity.uami_id
+  uami_client_id                       = module.emp_track_managed_identity.client_id
+  uami_principal_id                    = module.emp_track_managed_identity.principal_id
   rg_name                              = module.rg.rg_name
   region                               = var.region
-  private_dns_zone_id                  = azurerm_private_dns_zone.cosmos.name
-  backend_principal_id                 = module.emp_track_managed_identity.principal_id
+  cosmosdb_endpoint                    = module.emp_track_db.cosmosdb_endpoint
 }
 
 # cosmos db
