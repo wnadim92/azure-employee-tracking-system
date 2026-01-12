@@ -1,0 +1,47 @@
+name: 'Web App Deploy'
+description: 'Deploys code onto App Service, Web, or Function App'
+inputs:
+  TARGET_ENVIRONMENT:
+    description: 'Target environment (nonprod, prod)'
+    required: true
+  CHECKOUT_PATH:
+    description: 'Path for checkout'
+    required: false
+    default: '.'
+  WORKING_DIRECTORY:
+    description: 'Root of terraform src'
+    required: true
+  REGION:
+    description: 'Azure Region'
+    required: true
+  RESOURCE_NAME:
+    description: 'The name of the app service, webapp, or function app'
+    required: true
+  DESTROY:
+    description: 'Destroy resources'
+    required: false
+    default: 'false'
+  PACKAGE_PATH:
+    description: 'Path to the code package to deploy'
+    required: false
+    default: '.'
+
+runs:
+  using: "composite"
+  steps:
+    - name: Run Terraform Deploy
+      uses: ./.github/actions/terraform-deploy
+      with:
+        TARGET_ENVIRONMENT: ${{ inputs.TARGET_ENVIRONMENT }}
+        CHECKOUT_PATH: ${{ inputs.CHECKOUT_PATH }}
+        WORKING_DIRECTORY: ${{ inputs.WORKING_DIRECTORY }}
+        REGION: ${{ inputs.REGION }}
+        DESTROY: ${{ inputs.DESTROY }}
+        RESOURCE_NAME: ${{ inputs.RESOURCE_NAME }}
+
+    - name: Deploy Code to Web/Function App
+      if: inputs.DESTROY != 'true'
+      uses: azure/webapps-deploy@v2
+      with:
+        app-name: ${{ inputs.RESOURCE_NAME }}
+        package: ${{ inputs.PACKAGE_PATH }}

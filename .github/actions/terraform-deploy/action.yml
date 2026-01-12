@@ -22,6 +22,10 @@ inputs:
     description: 'Destroy resources'
     required: false
     default: 'false'
+  RESOURCE_NAME:
+    description: 'Name of the resource to override in Terraform'
+    required: false
+    default: ''
 
 runs:
   using: "composite"
@@ -40,13 +44,19 @@ runs:
         # Use -reconfigure to ensure backend stays fresh
         terraform init -reconfigure -backend-config="${{ inputs.TARGET_ENVIRONMENT }}/terraform.tfbackend"
 
+        # Construct var arguments if RESOURCE_NAME is provided
+        VAR_ARGS=""
+        if [ -n "${{ inputs.RESOURCE_NAME }}" ]; then
+          VAR_ARGS="-var=\"funcapp_name=${{ inputs.RESOURCE_NAME }}\""
+        fi
+
         if [ "${{ inputs.DESTROY }}" == "true" ]; then
           echo "Running terraform DESTROY plan..."
-          terraform plan -destroy -var-file="${{ inputs.TARGET_ENVIRONMENT }}/terraform.tfvars" -out=tfplan
+          terraform plan -destroy -var-file="${{ inputs.TARGET_ENVIRONMENT }}/terraform.tfvars" $VAR_ARGS -out=tfplan
         else
           echo "Running terraform plan..."
           # Fixed typo: changed -out=tflan to -out=tfplan
-          terraform plan -var-file="${{ inputs.TARGET_ENVIRONMENT }}/terraform.tfvars" -out=tfplan
+          terraform plan -var-file="${{ inputs.TARGET_ENVIRONMENT }}/terraform.tfvars" $VAR_ARGS -out=tfplan
         fi
 
         echo "Running terraform apply (or destroy)..."
