@@ -45,9 +45,7 @@ runs:
       run: |
         FULL_IMAGE_PATH="${{ inputs.REGISTRY_LOGIN_SERVER }}/${{ inputs.IMAGE_NAME }}:${{ inputs.IMAGE_TAG }}"
         
-        # Build using the PROJECT_PATH as the context
-        # This assumes your Dockerfile is inside that folder
-        docker build -t $FULL_IMAGE_PATH -f ${{ inputs.PROJECT_PATH }}/Dockerfile .
+        docker build -t $FULL_IMAGE_PATH -f ${{ inputs.PROJECT_PATH }}/Dockerfile ${{ inputs.PROJECT_PATH }}
         
         docker push $FULL_IMAGE_PATH
         echo "FULL_IMAGE_PATH=$FULL_IMAGE_PATH" >> $GITHUB_ENV
