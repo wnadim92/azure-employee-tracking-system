@@ -45,7 +45,7 @@ jobs:
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
       - name: Build React App
-        uses: wnadim92/azure-employee-tracking-system/.github/actions/docker-build@main
+        uses: ./.github/actions/docker-build
         with:
           REGISTRY_LOGIN_SERVER: ${{ secrets.REGISTRY_LOGIN_SERVER }} 
           REGISTRY_USERNAME: ${{ secrets.REGISTRY_USERNAME }}
@@ -54,7 +54,7 @@ jobs:
           PROJECT_PATH: 'appcode/frontend'    
 
       - name: Build FastAPI Backend
-        uses: snadim92/azure-employee-tracking-system/.github/actions/docker-build@main
+        uses: ./.github/actions/docker-build
         with:
           REGISTRY_LOGIN_SERVER: ${{ secrets.REGISTRY_LOGIN_SERVER }} 
           REGISTRY_USERNAME: ${{ secrets.REGISTRY_USERNAME }}
@@ -81,7 +81,7 @@ jobs:
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
       - name: Terraform Apply
-        uses: snadim92/azure-employee-tracking-system/.github/actions/terraform-deploy@main
+        uses: ./.github/actions/terraform-deploy@main
         with:
           TARGET_ENVIRONMENT: '${{ env.ENV }}'
           CHECKOUT_PATH: .
