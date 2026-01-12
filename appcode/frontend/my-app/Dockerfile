@@ -6,13 +6,17 @@ WORKDIR /app
 
 # Copy dependency files first to leverage Docker caching
 # Note: Path is relative to the Dockerfile (my-app/...)
-COPY my-app/package*.json ./
+COPY package*.json ./
 
 # Install dependencies
 RUN npm install
 
 # Copy the rest of the application source code
-COPY my-app/ .
+COPY . .
+
+# Accept the build argument and set it as an environment variable
+ARG REACT_APP_API_BASE_URL
+ENV REACT_APP_API_BASE_URL=$REACT_APP_API_BASE_URL
 
 # Build the production-ready application
 RUN npm run build

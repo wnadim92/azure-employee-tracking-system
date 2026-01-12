@@ -54,7 +54,7 @@ runs:
       id: docker_build
       uses: docker/build-push-action@v4
       with:
-        context: ./
+        context: ${{ inputs.PROJECT_PATH }}
         file: ${{ inputs.PROJECT_PATH }}/Dockerfile
         builder: ${{ steps.buildx.outputs.name }}
         push: true

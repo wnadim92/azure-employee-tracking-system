@@ -1,32 +1,38 @@
+version: '3.8'
+
 services:
-  db:
-    image: postgres:15-alpine
-    container_name: local_postgres
+  cosmosdb:
+    image: mcr.microsoft.com/cosmosdb/linux/azure-cosmos-emulator
+    container_name: cosmosdb_emulator
+    platform: linux/amd64
     environment:
-      POSTGRES_USER: local_user
-      POSTGRES_PASSWORD: local_password
-      POSTGRES_DB: local_db
+      AZURE_COSMOS_EMULATOR_PARTITION_COUNT: 3
+      AZURE_COSMOS_EMULATOR_ENABLE_DATA_PERSISTENCE: "true"
     ports:
-      - "5432:5432"
+      - "8081:8081"
+      - "10251-10254:10251-10254"
     volumes:
-      # Adjusted path to match root location
-      - ./backend/db_init:/docker-entrypoint-initdb.d:ro
+      - cosmos_data:/data/db
 
   api:
     build:
-      context: ./backend  # Looks for Dockerfile inside backend folder
+      context: ./backend/my-app  # Looks for Dockerfile inside backend folder
     container_name: fastapi_backend
     ports:
       - "7071:80"
     environment:
-      - DATABASE_URL=postgres://local_user:local_password@db:5432/local_db
-      - DB_SSL_MODE=disable
+      - COSMOS_DB_ENDPOINT=https://cosmosdb:8081
+      - COSMOS_DB_KEY=C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==
+      - AzureWebJobsScriptRoot=/home/site/wwwroot
+      - AzureFunctionsJobHost__Logging__Console__IsEnabled=true
+      - AzureFunctionsJobHost__CORS__AllowedOrigins=*
+      - AzureFunctionsJobHost__CORS__SupportCredentials=true
     depends_on:
-      - db
+      - cosmosdb
 
   frontend:
     build:
-      context: ./frontend  # Looks for Dockerfile inside frontend folder
+      context: ./frontend/my-app  # Looks for Dockerfile inside frontend folder
       args:
         - REACT_APP_API_BASE_URL=http://localhost:7071/api      
     container_name: react_frontend
@@ -34,3 +40,6 @@ services:
       - "3000:80"
     depends_on:
       - api
+
+volumes:
+  cosmos_data:

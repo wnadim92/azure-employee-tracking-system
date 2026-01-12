@@ -4,23 +4,33 @@ import logging
 from typing import List, Optional
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 
 # 2026 Azure SDKs
 from azure.cosmos.aio import CosmosClient
+from azure.cosmos.exceptions import CosmosHttpResponseError
 from azure.identity.aio import DefaultAzureCredential
+from azure.core.exceptions import ResourceNotFoundError
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # These are set by your Terraform in Azure
-    endpoint = os.getenv("COSMOS_ENDPOINT")
+    # These are set by your Terraform in Azure or docker-compose locally
+    endpoint = os.getenv("COSMOS_DB_ENDPOINT")
     db_name = os.getenv("DB_DATABASE_NAME", "EmployeeDB")
     
-    # Authenticate via Managed Identity (Zero Keys)
-    credential = DefaultAzureCredential()
-    client = CosmosClient(endpoint, credential=credential)
+    # For local development, use the master key. For production, use DefaultAzureCredential.
+    key = os.getenv("COSMOS_DB_KEY")
+    credential = None
+    
+    if key:
+        logging.info("Connecting to Cosmos DB Emulator with key.")
+        client = CosmosClient(endpoint, credential=key)
+    else:
+        logging.info("Connecting to Cosmos DB with Managed Identity.")
+        credential = DefaultAzureCredential()
+        client = CosmosClient(endpoint, credential=credential)
     
     # Store the container client in app state
     app.state.container = client.get_database_client(db_name).get_container_client("employees")
@@ -29,7 +39,8 @@ async def lifespan(app: FastAPI):
     yield
     
     await client.close()
-    await credential.close()
+    if credential:
+        await credential.close()
 
 app = FastAPI(lifespan=lifespan)
 
@@ -61,7 +72,30 @@ async def get_employees():
     return employees
 
 @app.post("/api/employee")
-async def save_employee(emp: Employee):
+async def save_employee(emp: Employee) -> Employee:
     # upsert_item handles both Create and Update
-    await app.state.container.upsert_item(emp.model_dump(by_alias=True))
-    return {"success": True}
+    created_item = await app.state.container.upsert_item(emp.model_dump(by_alias=True))
+    return Employee(**created_item)
+
+@app.get("/api/employees/{employee_id}", response_model=Employee)
+async def get_employee_by_id(employee_id: str):
+    try:
+        # Use read_item for efficient point reads.
+        # This assumes the container's partition key is '/id'.
+        item = await app.state.container.read_item(item=employee_id, partition_key=employee_id)
+        return Employee(**item)
+    except ResourceNotFoundError:
+        raise HTTPException(status_code=404, detail="Employee not found")
+
+@app.delete("/api/employees/{employee_id}", status_code=204)
+async def delete_employee(employee_id: str):
+    try:
+        # To delete, you need the item's id and its partition key.
+        # This assumes the container's partition key is '/id'.
+        await app.state.container.delete_item(item=employee_id, partition_key=employee_id)
+    except CosmosHttpResponseError as e:
+        if e.status_code == 404:
+            # Item not found is acceptable for a delete operation (idempotency)
+            pass
+        else:
+            raise
