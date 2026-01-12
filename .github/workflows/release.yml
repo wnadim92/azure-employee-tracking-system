@@ -22,9 +22,8 @@ permissions:
 
 env:
   ENV: ${{ github.event.inputs.environment }}
-  AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
   PRIMARY_REGION: "eastus2"
-  SECONDARY_REGION: "westus2" 
+  SECONDARY_REGION: "centralus" 
   SERVICE_NAME: employeetracking
 
 run-name: >
@@ -49,7 +48,7 @@ jobs:
       - name: Terraform Apply
         uses: wnadim92/azure-employee-tracking-system/.github/actions/terraform-deploy@main
         with:
-          TARGET_ENVIRONMENT: ${{ env.ENV }}
+          TARGET_ENVIRONMENT: '${{ env.ENV }}'
           CHECKOUT_PATH: .
           WORKING_DIRECTORY: 'terraform/src'
         env:
