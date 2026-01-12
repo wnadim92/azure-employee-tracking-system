@@ -43,8 +43,8 @@ runs:
     - name: Log in to Docker Hub
       uses: docker/login-action@v3
       with:
-        username: ${{ secrets.REGISTRY_USERNAME }}
-        password: ${{ secrets.REGISTRY_PASSWORD }}
+        username: ${{ inputs.REGISTRY_USERNAME }}
+        password: ${{ inputs.REGISTRY_PASSWORD }}
 
     - name: Set up Docker Buildx
       id: buildx
@@ -58,7 +58,7 @@ runs:
         file: ${{ inputs.PROJECT_PATH }}/Dockerfile
         builder: ${{ steps.buildx.outputs.name }}
         push: true
-        tags: ${{ secrets.REGISTRY_USERNAME }}/${{ inputs.IMAGE_NAME }}:${{ inputs.IMAGE_TAG }}        
+        tags: ${{ inputs.REGISTRY_USERNAME }}/${{ inputs.IMAGE_NAME }}:${{ inputs.IMAGE_TAG }}        
 
     # - name: Build and Push Docker Image
     #   shell: bash
