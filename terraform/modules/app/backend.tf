@@ -31,7 +31,6 @@ module "emp_track_db_pe_snet" {
   region      = var.region
 }
 
-# cosmos db
 module "emp_track_managed_identity" {
   source                               = "../../modules/managed_identity"
   rg_name                              = module.rg.rg_name
@@ -51,7 +50,11 @@ module "emp_track_middle_funcapp" {
   region                               = var.region
   cosmosdb_endpoint                    = module.emp_track_db.cosmosdb_endpoint
   docker_registry_url                  = var.docker_registry_url
-  image_name                           = var.image_name
+  image_name                           = var.backend_image_name
+  blob_dns_zone_id                     = azurerm_private_dns_zone.blob.name
+  file_dns_zone_id                     = azurerm_private_dns_zone.file.name
+  table_dns_zone_id                    = azurerm_private_dns_zone.table.name
+  queue_dns_zone_id                    = azurerm_private_dns_zone.queue.name
 }
 
 module "emp_track_db" {
