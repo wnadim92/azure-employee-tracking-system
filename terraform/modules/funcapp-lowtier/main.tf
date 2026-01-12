@@ -39,7 +39,6 @@ resource "azurerm_linux_function_app" "this" {
 
   site_config {
     vnet_route_all_enabled = false
-    always_on              = false
 
     # IF NOT USING DOCKER (Python):
     application_stack {
