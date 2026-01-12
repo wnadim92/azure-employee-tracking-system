@@ -41,7 +41,7 @@ runs:
       shell: bash
       working-directory: ${{ inputs.CHECKOUT_PATH }}/${{ inputs.WORKING_DIRECTORY }}
       env:
-        TF_VAR_region: ${{ inputs.REGION }}
+        TF_VAR_primary_region: ${{ inputs.REGION }}
       run: |
         # Use -reconfigure to ensure backend stays fresh
         terraform init -reconfigure -backend-config="${{ inputs.TARGET_ENVIRONMENT }}/terraform.tfbackend"
