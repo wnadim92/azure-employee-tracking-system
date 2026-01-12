@@ -45,7 +45,7 @@ jobs:
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
       - name: Build React App
-        uses: snadim92/azure-employee-tracking-system/.github/actions/docker-build@main
+        uses: wnadim92/azure-employee-tracking-system/.github/actions/docker-build@main
         with:
           REGISTRY_LOGIN_SERVER: ${{ secrets.REGISTRY_LOGIN_SERVER }} 
           REGISTRY_USERNAME: ${{ secrets.REGISTRY_USERNAME }}
