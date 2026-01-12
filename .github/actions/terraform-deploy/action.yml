@@ -36,4 +36,4 @@ runs:
         terraform plan -var-file="${{ inputs.TARGET_ENVIRONMENT }}/terraform.tfvars" -out=tfplan
 
         echo "Running terraform apply..."
-        terraform apply -auto-approve tfplan
+        #terraform apply -auto-approve tfplan
