@@ -20,10 +20,11 @@ module "emp_track_middletier_vnetintegration_snet" {
   rg_name     = module.rg.rg_name
   vnet_name   = module.vnet.vnet_name
   region      = var.region
+  delegation_service = "Microsoft.Web/serverFarms"
 }
 
-#db subnet
-module "emp_track_db_snet" {
+#db pe subnet
+module "emp_track_db_pe_snet" {
   source      = "../../modules/subnet"
   subnet_type = "private"
   cidr        = var.emp_track_db_snet_cidr

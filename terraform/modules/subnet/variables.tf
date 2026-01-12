@@ -10,6 +10,12 @@ variable "region" {
   default     = "eastus"
 }
 
+variable "delegation_service" {
+  type        = string
+  description = "The service name for subnet delegation (e.g., Microsoft.Web/serverFarms)"
+  default     = null
+}
+
 variable "subnet_type" {
   type        = string
   description = "Public facing or private facing subnet. (public or private). Based off selection, sets up NSG to block public IPs and allow ports internally. Otherwise only http ports allowed and external IPs are allowed for public"

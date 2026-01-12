@@ -5,6 +5,18 @@ resource "azurerm_subnet" "this" {
   address_prefixes     = [var.cidr]
 
   private_endpoint_network_policies = "Enabled"
+
+  # Dynamic block: if var.delegation_service is null, this block is skipped
+  dynamic "delegation" {
+    for_each = var.delegation_service != null ? [1] : []
+    content {
+      name = "delegation"
+      service_delegation {
+        name    = var.delegation_service
+        actions = ["Microsoft.Network/virtualNetworks/subnets/action"]
+      }
+    }
+  }
 }
 
 module "nsg" {

@@ -1,5 +1,6 @@
-fastapi
-uvicorn[standard]
-asyncpg
 azure-functions
+fastapi
+uvicorn
+azure-cosmos
+azure-identity
 pydantic

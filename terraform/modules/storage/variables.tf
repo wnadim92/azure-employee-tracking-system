@@ -1,8 +1,3 @@
-variable "resource_name" {
-  type        = string
-  description = "The name of the resource pe is being attached to."
-  default     = "platform"
-}
 
 variable "rg_name" {
   type        = string
@@ -21,17 +16,19 @@ variable "subnet_id" {
   description = "The subnet id to attach the pe to."
 }
 
-variable "private_connection_resource_id" {
+variable "blob_dns_zone_id" {
   type        = string
-  description = "The subnet id to attach the pe to."
 }
 
-variable "pe_subresource_type" {
+variable "file_dns_zone_id" {
   type        = string
-  description = "The subnet id to attach the pe to."
 }
 
-variable "private_dns_zone_id" {
+variable "table_dns_zone_id" {
   type        = string
-  description = "The subnet id to attach the pe to."
 }
+
+variable "queue_dns_zone_id" {
+  type        = string
+}
+
