@@ -19,9 +19,8 @@ variable "docker_registry_url" {
     type = string
 }
 
-variable "image_name" {
-    type = string
-}
+variable "frontend_image_name" {}
+variable "backend_image_name" {}
 
 variable "vnet_address_spaces" {
   type        = list(string)

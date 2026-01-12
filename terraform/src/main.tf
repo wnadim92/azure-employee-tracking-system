@@ -12,6 +12,9 @@ module "app_primary_region" {
     emp_track_middletier_pe_snet_cidr                    = var.primary_region_emp_track_middletier_pe_snet_cidr
     emp_track_middletier_vnetintegration_snet_cidr       = var.primary_region_emp_track_middletier_vnetintegration_snet_cidr
     emp_track_db_snet_cidr                               = var.primary_region_emp_track_db_snet_cidr
+    docker_registry_url                                  = var.docker_registry_url
+    frontend_image_name                                  = var.frontend_image_name
+    backend_image_name                                   = var.backend_image_name
 }
 
 module "app_secondary_region" {
@@ -28,4 +31,7 @@ module "app_secondary_region" {
     emp_track_middletier_pe_snet_cidr                    = var.secondary_region_emp_track_middletier_pe_snet_cidr
     emp_track_middletier_vnetintegration_snet_cidr       = var.secondary_region_emp_track_middletier_vnetintegration_snet_cidr
     emp_track_db_snet_cidr                               = var.secondary_region_emp_track_db_snet_cidr
+    docker_registry_url                                  = var.docker_registry_url
+    frontend_image_name                                  = var.frontend_image_name
+    backend_image_name                                   = var.backend_image_name
 }

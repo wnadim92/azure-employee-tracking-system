@@ -64,7 +64,7 @@ jobs:
           PROJECT_PATH: 'appcode/frontend/my-app'    
 
   provision-infra:
-    needs: [build-images]  
+    needs: [build-images, generate-matrix]  
     strategy:
       matrix:
         region: ${{ fromJSON(needs.generate-matrix.outputs.regions) }}

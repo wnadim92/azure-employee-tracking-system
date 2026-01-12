@@ -71,7 +71,7 @@ module "storage" {
   rg_name              = var.rg_name
   region               = var.region
   subnet_id            = var.pe_subnet_id
-  backend_principal_id = var.uami_principal_id
+  principal_id         = var.uami_principal_id
   blob_dns_zone_id     = var.blob_dns_zone_id
   file_dns_zone_id     = var.file_dns_zone_id
   table_dns_zone_id    = var.table_dns_zone_id

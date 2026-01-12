@@ -21,3 +21,7 @@ variable "secondary_region_emp_track_frontend_vnetintegration_snet_cidr" {}
 variable "secondary_region_emp_track_middletier_pe_snet_cidr" {}
 variable "secondary_region_emp_track_middletier_vnetintegration_snet_cidr" {}
 variable "secondary_region_emp_track_db_snet_cidr" {}
+
+variable "frontend_image_name" {}
+variable "backend_image_name" {}
+variable "docker_registry_url" {}
