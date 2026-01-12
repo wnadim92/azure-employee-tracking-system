@@ -22,10 +22,12 @@ inputs:
     description: 'Destroy resources'
     required: false
     default: 'false'
-  RESOURCE_NAME:
-    description: 'Name of the resource to override in Terraform'
+  FUNCAPP_NAME:
+    description: 'Name of the Function App'
     required: false
-    default: ''
+  WEBAPP_NAME:
+    description: 'Name of the Web App'
+    required: false
 
 runs:
   using: "composite"
@@ -46,8 +48,11 @@ runs:
 
         # Construct var arguments if RESOURCE_NAME is provided
         VAR_ARGS=""
-        if [ -n "${{ inputs.RESOURCE_NAME }}" ]; then
-          VAR_ARGS="-var funcapp_name=${{ inputs.RESOURCE_NAME }}"
+        if [ -n "${{ inputs.FUNCAPP_NAME }}" ]; then
+          VAR_ARGS="$VAR_ARGS -var funcapp_name=${{ inputs.FUNCAPP_NAME }}"
+        fi
+        if [ -n "${{ inputs.WEBAPP_NAME }}" ]; then
+          VAR_ARGS="$VAR_ARGS -var webapp_name=${{ inputs.WEBAPP_NAME }}"
         fi
 
         if [ "${{ inputs.DESTROY }}" == "true" ]; then

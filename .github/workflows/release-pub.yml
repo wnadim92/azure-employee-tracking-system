@@ -28,7 +28,7 @@ permissions:
 
 env:
   ENV: ${{ github.event.inputs.environment }}
-  PRIMARY_REGION: "eastus"
+  PRIMARY_REGION: "westus2"
   SECONDARY_REGION: "westus"
 
 run-name: >
@@ -81,7 +81,7 @@ jobs:
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
-      - name: Web App Deploy (Infra + Code)
+      - name: Deploy Backend (Infra + Code)
         uses: ./.github/actions/webapp-deploy
         with:
           TARGET_ENVIRONMENT: '${{ env.ENV }}'
@@ -89,9 +89,18 @@ jobs:
           WORKING_DIRECTORY: 'terraform/src'
           REGION: ${{ env.PRIMARY_REGION }}
           DESTROY: ${{ github.event.inputs.destroy }}
-          RESOURCE_NAME: "emptrack-${{ env.ENV }}"
+          FUNCAPP_NAME: "emptrack-api-${{ env.ENV }}"
+          WEBAPP_NAME: "emptrack-web-${{ env.ENV }}"
+          DEPLOY_TARGET_NAME: "emptrack-api-${{ env.ENV }}"
           PACKAGE_PATH: 'appcode/backend/my-app'
         env:
           ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
           TF_VAR_shouldBeMultiRegion: ${{ github.event.inputs.multiregion }}
           TF_VAR_secondary_region: ${{ env.SECONDARY_REGION }}
+
+      - name: Deploy Frontend (Code Only)
+        uses: azure/webapps-deploy@v2
+        if: github.event.inputs.destroy != 'true'
+        with:
+          app-name: "emptrack-web-${{ env.ENV }}"
+          package: 'appcode/frontend/my-app'

@@ -14,9 +14,12 @@ inputs:
   REGION:
     description: 'Azure Region'
     required: true
-  RESOURCE_NAME:
-    description: 'The name of the app service, webapp, or function app'
-    required: true
+  FUNCAPP_NAME:
+    description: 'Name of the Function App for Terraform'
+    required: false
+  WEBAPP_NAME:
+    description: 'Name of the Web App for Terraform'
+    required: false
   DESTROY:
     description: 'Destroy resources'
     required: false
@@ -25,6 +28,9 @@ inputs:
     description: 'Path to the code package to deploy'
     required: false
     default: '.'
+  DEPLOY_TARGET_NAME:
+    description: 'Name of the specific App Service/Function to deploy code to'
+    required: true
 
 runs:
   using: "composite"
@@ -37,11 +43,12 @@ runs:
         WORKING_DIRECTORY: ${{ inputs.WORKING_DIRECTORY }}
         REGION: ${{ inputs.REGION }}
         DESTROY: ${{ inputs.DESTROY }}
-        RESOURCE_NAME: ${{ inputs.RESOURCE_NAME }}
+        FUNCAPP_NAME: ${{ inputs.FUNCAPP_NAME }}
+        WEBAPP_NAME: ${{ inputs.WEBAPP_NAME }}
 
     - name: Deploy Code to Web/Function App
       if: inputs.DESTROY != 'true'
       uses: azure/webapps-deploy@v2
       with:
-        app-name: ${{ inputs.RESOURCE_NAME }}
+        app-name: ${{ inputs.DEPLOY_TARGET_NAME }}
         package: ${{ inputs.PACKAGE_PATH }}
