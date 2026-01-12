@@ -23,7 +23,7 @@ permissions:
 env:
   ENV: ${{ github.event.inputs.environment }}
   PRIMARY_REGION: "eastus2"
-  SECONDARY_REGION: "centralus" 
+  SECONDARY_REGION: "centralus"
   SERVICE_NAME: employeetracking
 
 run-name: >
@@ -33,7 +33,6 @@ run-name: >
 jobs:
   provision-infra:
     runs-on: ubuntu-latest
-    environment: ${{ github.event.inputs.environment }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -72,7 +71,6 @@ jobs:
   deploy-apps:
     needs: [provision-infra, generate-matrix]
     runs-on: ubuntu-latest
-    environment: ${{ github.event.inputs.environment }}
     strategy:
       matrix:
         region: ${{ fromJSON(needs.generate-matrix.outputs.regions) }}
