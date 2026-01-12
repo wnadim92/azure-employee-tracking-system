@@ -1,5 +1,5 @@
-name: 'Docker Build and Deploy to Azure Function App'
-description: 'Builds a Docker Container, pushes to Registry, and deploys to Azure Function App'
+name: 'React Docker Build and Deploy to Container Registry'
+description: 'Builds a Docker Container, pushes to Registry'
 inputs:
   REGISTRY_LOGIN_SERVER:
     description: 'Container Registry URL'
@@ -17,10 +17,6 @@ inputs:
     description: 'Tag for the image'
     required: false
     default: 'latest'
-  FUNC_APP_NAME:
-    description: 'The Azure Function App name'
-    required: true
-  # Added input for Azure Authentication
   AZURE_CREDENTIALS:
     description: 'JSON object containing Service Principal credentials'
     required: false
@@ -52,14 +48,7 @@ runs:
         
         # Build using the PROJECT_PATH as the context
         # This assumes your Dockerfile is inside that folder
-        docker build -t $FULL_IMAGE_PATH ${{ inputs.PROJECT_PATH }}
+        docker build -t $FULL_IMAGE_PATH -f ${{ inputs.PROJECT_PATH }}/Dockerfile .
         
         docker push $FULL_IMAGE_PATH
         echo "FULL_IMAGE_PATH=$FULL_IMAGE_PATH" >> $GITHUB_ENV
-
-
-    - name: Deploy to Azure Function
-      uses: Azure/functions-container-action@v1
-      with:
-        app-name: ${{ inputs.FUNC_APP_NAME }}
-        image: ${{ env.FULL_IMAGE_PATH }}

@@ -31,7 +31,62 @@ run-name: >
   (MultiRegion: ${{ github.event.inputs.multiregion }})
 
 jobs:
+  build-images:
+    runs-on: ubuntu-latest  
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Build React App
+        uses: wnadim92/azure-employee-tracking-system/.github/actions/docker-build@main
+        with:
+          REGISTRY_LOGIN_SERVER: ${{ secrets.REGISTRY_LOGIN_SERVER }} 
+          REGISTRY_USERNAME: ${{ secrets.REGISTRY_USERNAME }}
+          REGISTRY_PASSWORD: ${{ secrets.REGISTRY_PASSWORD }}
+          IMAGE_NAME: "emptrack-frontend"
+          PROJECT_PATH: 'appcode/frontend/my-app'           
+
+      # - name: Build React App
+      #   uses: wnadim92/azure-employee-tracking-system/.github/actions/docker-build@main
+      #   with:
+      #     TARGET_ENVIRONMENT: ${{ env.ENV }}
+      #     PROJECT_PATH: 'appcode/frontend/my-app'
+      #     APP_SVC_NAME: "emptrack-${{ env.ENV }}-${{ matrix.region }}-appsvc"
+
+      - name: Build FastAPI Backend
+        uses: wnadim92/azure-employee-tracking-system/.github/actions/docker-build@main
+        with:
+          REGISTRY_LOGIN_SERVER: ${{ secrets.REGISTRY_LOGIN_SERVER }} 
+          REGISTRY_USERNAME: ${{ secrets.REGISTRY_USERNAME }}
+          REGISTRY_PASSWORD: ${{ secrets.REGISTRY_PASSWORD }}
+          IMAGE_NAME: "emptrack-backend"
+          PROJECT_PATH: 'appcode/backend'   
+
+      # - name: Deploy FastAPI Python Function (${{ matrix.region }})
+      #   uses: wnadim92/azure-employee-tracking-system/.github/actions/docker-build-funcapp-deploy@main
+      #   with:
+      #     TARGET_ENVIRONMENT: ${{ env.ENV }}
+      #     FUNC_APP_NAME: "emptrack-${{ env.ENV }}-${{ matrix.region }}-func"
+      #     REGISTRY_LOGIN_SERVER: ${{ secrets.REGISTRY_LOGIN_SERVER }} 
+      #     REGISTRY_USERNAME: ${{ secrets.REGISTRY_USERNAME }}
+      #     REGISTRY_PASSWORD: ${{ secrets.REGISTRY_PASSWORD }}
+      #     IMAGE_NAME: "emptrack-backend"
+      #     PROJECT_PATH: 'appcode/backend'
+
+
   provision-infra:
+    needs: [build-images]  
+    strategy:
+      matrix:
+        region: ${{ fromJSON(needs.generate-matrix.outputs.regions) }}
+      fail-fast: false 
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -67,40 +122,3 @@ jobs:
           else
             echo 'regions=["${{ env.PRIMARY_REGION }}"]' >> $GITHUB_OUTPUT
           fi
-
-  deploy-apps:
-    needs: [provision-infra, generate-matrix]
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        region: ${{ fromJSON(needs.generate-matrix.outputs.regions) }}
-      fail-fast: false 
-    
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Azure Login
-        uses: azure/login@v2
-        with:
-          client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-
-      - name: Deploy React App (${{ matrix.region }})
-        uses: wnadim92/azure-employee-tracking-system/.github/actions/react-appsvc-deploy@main
-        with:
-          TARGET_ENVIRONMENT: ${{ env.ENV }}
-          PROJECT_PATH: 'appcode/frontend/my-app'
-          APP_SVC_NAME: "emptrack-${{ env.ENV }}-${{ matrix.region }}-appsvc"
-
-      - name: Deploy FastAPI Python Function (${{ matrix.region }})
-        uses: wnadim92/azure-employee-tracking-system/.github/actions/docker-build-funcapp-deploy@main
-        with:
-          TARGET_ENVIRONMENT: ${{ env.ENV }}
-          FUNC_APP_NAME: "emptrack-${{ env.ENV }}-${{ matrix.region }}-func"
-          REGISTRY_LOGIN_SERVER: ${{ secrets.REGISTRY_LOGIN_SERVER }} 
-          REGISTRY_USERNAME: ${{ secrets.REGISTRY_USERNAME }}
-          REGISTRY_PASSWORD: ${{ secrets.REGISTRY_PASSWORD }}
-          IMAGE_NAME: "emptrack-backend"
-          PROJECT_PATH: 'appcode/backend'
