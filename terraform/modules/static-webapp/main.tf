@@ -21,7 +21,6 @@ resource "azurerm_linux_web_app" "this" {
 
   site_config {
     always_on              = false
-    acr_use_managed_identity_credentials = true
     application_stack {
       docker_image_name = "${var.docker_registry_url}/${var.image_name}:latest"
     }
