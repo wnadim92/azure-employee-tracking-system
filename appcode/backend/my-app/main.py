@@ -26,9 +26,11 @@ async def lifespan(app: FastAPI):
     credential = None
     
     if key:
-        logging.info("Connecting to Cosmos DB Emulator with key.")
-        # Disable SSL verification for local emulator
-        client = CosmosClient(endpoint, credential=key, connection_verify=False)
+        # Only disable SSL verification if connecting to the local emulator
+        is_emulator = "localhost" in endpoint or "127.0.0.1" in endpoint or "cosmosdb" in endpoint
+        logging.info(f"Connecting to Cosmos DB with key. SSL Verify: {not is_emulator}")
+        
+        client = CosmosClient(endpoint, credential=key, connection_verify=not is_emulator)
     else:
         logging.info("Connecting to Cosmos DB with Managed Identity.")
         credential = DefaultAzureCredential()

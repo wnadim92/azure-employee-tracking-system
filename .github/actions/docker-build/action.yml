@@ -23,6 +23,9 @@ inputs:
   PROJECT_PATH:
     description: 'Subdirectory of the app containing the Dockerfile'
     required: false
+  BUILD_ARGS:
+    description: 'List of build-time variables (e.g., REACT_APP_API_BASE_URL=...)'
+    required: false
 
 runs:
   using: "composite"
@@ -58,7 +61,8 @@ runs:
         file: ${{ inputs.PROJECT_PATH }}/Dockerfile
         builder: ${{ steps.buildx.outputs.name }}
         push: true
-        tags: ${{ inputs.REGISTRY_USERNAME }}/${{ inputs.IMAGE_NAME }}:${{ inputs.IMAGE_TAG }}        
+        tags: ${{ inputs.REGISTRY_USERNAME }}/${{ inputs.IMAGE_NAME }}:${{ inputs.IMAGE_TAG }}
+        build-args: ${{ inputs.BUILD_ARGS }}
 
     # - name: Build and Push Docker Image
     #   shell: bash
