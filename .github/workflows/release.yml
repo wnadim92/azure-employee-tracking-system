@@ -44,15 +44,6 @@ jobs:
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
-      - name: Build React App
-        uses: ./.github/actions/docker-build
-        with:
-          REGISTRY_LOGIN_SERVER: ${{ secrets.REGISTRY_LOGIN_SERVER }} 
-          REGISTRY_USERNAME: ${{ secrets.REGISTRY_USERNAME }}
-          REGISTRY_PASSWORD: ${{ secrets.REGISTRY_PASSWORD }}
-          IMAGE_NAME: "snadim92/emptrack-frontend"
-          PROJECT_PATH: 'appcode/frontend'    
-
       - name: Build FastAPI Backend
         uses: ./.github/actions/docker-build
         with:
@@ -61,6 +52,15 @@ jobs:
           REGISTRY_PASSWORD: ${{ secrets.REGISTRY_PASSWORD }}
           IMAGE_NAME: "snadim92/emptrack-backend"
           PROJECT_PATH: 'appcode/backend'   
+
+      - name: Build React App
+        uses: ./.github/actions/docker-build
+        with:
+          REGISTRY_LOGIN_SERVER: ${{ secrets.REGISTRY_LOGIN_SERVER }} 
+          REGISTRY_USERNAME: ${{ secrets.REGISTRY_USERNAME }}
+          REGISTRY_PASSWORD: ${{ secrets.REGISTRY_PASSWORD }}
+          IMAGE_NAME: "snadim92/emptrack-frontend"
+          PROJECT_PATH: 'appcode/frontend'    
 
   provision-infra:
     needs: [build-images]  
@@ -81,7 +81,7 @@ jobs:
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
       - name: Terraform Apply
-        uses: ./.github/actions/terraform-deploy@main
+        uses: ./.github/actions/terraform-deploy
         with:
           TARGET_ENVIRONMENT: '${{ env.ENV }}'
           CHECKOUT_PATH: .
