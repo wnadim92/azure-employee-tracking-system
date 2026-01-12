@@ -1,4 +1,4 @@
-name: 'React Docker Build and Deploy to Container Registry'
+name: 'Docker Build and Deploy to Container Registry'
 description: 'Builds a Docker Container, pushes to Registry'
 inputs:
   REGISTRY_LOGIN_SERVER:
@@ -21,9 +21,8 @@ inputs:
     description: 'JSON object containing Service Principal credentials'
     required: false
   PROJECT_PATH:
-    description: 'Subdirectory of the React app'
+    description: 'Subdirectory of the app containing the Dockerfile'
     required: false
-    default: 'appcode/backend/my-app'
 
 runs:
   using: "composite"
