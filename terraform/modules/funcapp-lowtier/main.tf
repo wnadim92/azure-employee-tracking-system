@@ -33,23 +33,25 @@ resource "azurerm_linux_function_app" "this" {
     "AZURE_CLIENT_ID"               = var.uami_client_id
     # "WEBSITE_CONTENTOVERVNET"       = "1" # Not supported in Y1
     # WEBSITE_VNET_ROUTE_ALL is now handled in site_config
+    "SCM_DO_BUILD_DURING_DEPLOYMENT" = "true"
+    "ENABLE_ORYX_BUILD"              = "true"
   }
 
   site_config {
     vnet_route_all_enabled = false
     
-    # IF USING DOCKER:
-    application_stack {
-      docker {
-        registry_url = var.docker_registry_url
-        image_name   = var.image_name
-        image_tag    = "latest"
-      }
-    }
-    
     # IF NOT USING DOCKER (Python):
+    application_stack {
+      python_version = "3.11"
+    }
+
+    # IF USING DOCKER:
     # application_stack {
-    #   python_version = "3.11"
+    #   docker {
+    #     registry_url = var.docker_registry_url
+    #     image_name   = var.image_name
+    #     image_tag    = "latest"
+    #   }
     # }
   }
 }

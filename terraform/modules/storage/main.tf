@@ -7,7 +7,7 @@ resource "azurerm_storage_account" "this" {
   account_kind             = "StorageV2" 
   
   # SECURITY: Deny all public access
-  public_network_access_enabled = false
+  public_network_access_enabled = true
   network_rules {
     default_action = "Deny"
     bypass         = ["AzureServices"]

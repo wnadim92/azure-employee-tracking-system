@@ -1,0 +1,97 @@
+name: HR Tracking Full Stack Azure Application Public
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Select Environment to Deploy'
+        required: true
+        type: choice
+        options:
+          - nonprod
+          - prod
+        default: nonprod
+      multiregion:
+        description: 'Enable Multi-Region Deployment?'
+        type: boolean
+        default: false
+      destroy:
+        description: 'Destroy Infrastructure?'
+        type: boolean
+        default: false
+
+permissions:
+  id-token: write
+  contents: read
+  packages: write 
+  deployments: write
+
+env:
+  ENV: ${{ github.event.inputs.environment }}
+  PRIMARY_REGION: "eastus"
+  SECONDARY_REGION: "westus"
+
+run-name: >
+  Deployment to ${{ github.event.inputs.environment }} 
+  (MultiRegion: ${{ github.event.inputs.multiregion }})
+
+jobs:
+  build-images:
+    runs-on: ubuntu-latest  
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Build FastAPI Backend
+        uses: ./.github/actions/docker-build
+        with:
+          REGISTRY_LOGIN_SERVER: ${{ secrets.REGISTRY_LOGIN_SERVER }} 
+          REGISTRY_USERNAME: ${{ secrets.REGISTRY_USERNAME }}
+          REGISTRY_PASSWORD: ${{ secrets.REGISTRY_PASSWORD }}
+          IMAGE_NAME: "emptrack-backend"
+          PROJECT_PATH: 'appcode/backend/my-app'   
+
+      - name: Build React App
+        uses: ./.github/actions/docker-build
+        with:
+          REGISTRY_LOGIN_SERVER: ${{ secrets.REGISTRY_LOGIN_SERVER }} 
+          REGISTRY_USERNAME: ${{ secrets.REGISTRY_USERNAME }}
+          REGISTRY_PASSWORD: ${{ secrets.REGISTRY_PASSWORD }}
+          IMAGE_NAME: "emptrack-frontend"
+          PROJECT_PATH: 'appcode/frontend/my-app'    
+
+  provision-infra:
+    needs: [build-images]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Web App Deploy (Infra + Code)
+        uses: ./.github/actions/webapp-deploy
+        with:
+          TARGET_ENVIRONMENT: '${{ env.ENV }}'
+          CHECKOUT_PATH: .
+          WORKING_DIRECTORY: 'terraform/src'
+          REGION: ${{ env.PRIMARY_REGION }}
+          DESTROY: ${{ github.event.inputs.destroy }}
+          RESOURCE_NAME: "emptrack-${{ env.ENV }}"
+          PACKAGE_PATH: 'appcode/backend/my-app'
+        env:
+          ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          TF_VAR_shouldBeMultiRegion: ${{ github.event.inputs.multiregion }}
+          TF_VAR_secondary_region: ${{ env.SECONDARY_REGION }}
