@@ -45,21 +45,21 @@ jobs:
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
       - name: Build React App
-        uses: wnadim92/azure-employee-tracking-system/.github/actions/docker-build@main
+        uses: snadim92/azure-employee-tracking-system/.github/actions/docker-build@main
         with:
           REGISTRY_LOGIN_SERVER: ${{ secrets.REGISTRY_LOGIN_SERVER }} 
           REGISTRY_USERNAME: ${{ secrets.REGISTRY_USERNAME }}
           REGISTRY_PASSWORD: ${{ secrets.REGISTRY_PASSWORD }}
-          IMAGE_NAME: "wnadim92/emptrack-frontend"
+          IMAGE_NAME: "snadim92/emptrack-frontend"
           PROJECT_PATH: 'appcode/frontend'    
 
       - name: Build FastAPI Backend
-        uses: wnadim92/azure-employee-tracking-system/.github/actions/docker-build@main
+        uses: snadim92/azure-employee-tracking-system/.github/actions/docker-build@main
         with:
           REGISTRY_LOGIN_SERVER: ${{ secrets.REGISTRY_LOGIN_SERVER }} 
           REGISTRY_USERNAME: ${{ secrets.REGISTRY_USERNAME }}
           REGISTRY_PASSWORD: ${{ secrets.REGISTRY_PASSWORD }}
-          IMAGE_NAME: "wnadim92/emptrack-backend"
+          IMAGE_NAME: "snadim92/emptrack-backend"
           PROJECT_PATH: 'appcode/backend'   
 
   provision-infra:
@@ -81,7 +81,7 @@ jobs:
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
       - name: Terraform Apply
-        uses: wnadim92/azure-employee-tracking-system/.github/actions/terraform-deploy@main
+        uses: snadim92/azure-employee-tracking-system/.github/actions/terraform-deploy@main
         with:
           TARGET_ENVIRONMENT: '${{ env.ENV }}'
           CHECKOUT_PATH: .
