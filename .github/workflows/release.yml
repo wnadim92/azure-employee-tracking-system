@@ -3,6 +3,14 @@ name: Deploy Infrastructure and Three Tier App for Employee Tracking Web Applica
 on:
   workflow_dispatch:
     inputs:
+      environment:
+        description: 'Select Environment to Deploy'
+        required: true
+        type: choice
+        options:
+          - nonprod
+          - prod
+        default: nonprod
       multiregion:
         description: 'Enable Multi-Region Deployment?'
         type: boolean
@@ -13,19 +21,20 @@ permissions:
   contents: read
 
 env:
-  ENV: ${{ fromJSON('{"develop":"nonprod","main":"prod"}')[github.ref_name] || 'dev' }}
+  ENV: ${{ github.event.inputs.environment }}
   AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
   PRIMARY_REGION: "eastus2"
   SECONDARY_REGION: "westus2" 
   SERVICE_NAME: employeetracking
 
 run-name: >
-  Deployment (${{ github.ref_name }}) to ${{ fromJSON('{"develop":"nonprod","main":"prod"}')[github.ref_name] || 'dev' }} 
-  (MultiRegion: ${{ inputs.multiregion }})
+  Deployment to ${{ github.event.inputs.environment }} 
+  (MultiRegion: ${{ github.event.inputs.multiregion }})
 
 jobs:
   provision-infra:
     runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.environment }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -35,7 +44,7 @@ jobs:
         with:
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          subscription-id: ${{ env.AZURE_SUBSCRIPTION_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
       - name: Terraform Apply
         uses: wnadim92/azure-employee-tracking-system/.github/actions/terraform-deploy@main
@@ -44,8 +53,8 @@ jobs:
           CHECKOUT_PATH: .
           WORKING_DIRECTORY: 'terraform/src'
         env:
-          ARM_SUBSCRIPTION_ID: ${{ env.AZURE_SUBSCRIPTION_ID }}
-          TF_VAR_shouldBeMultiRegion: ${{ inputs.multiregion }}
+          ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          TF_VAR_shouldBeMultiRegion: ${{ github.event.inputs.multiregion }}
           TF_VAR_secondary_region: ${{ env.SECONDARY_REGION }}
 
   generate-matrix:
@@ -55,7 +64,7 @@ jobs:
     steps:
       - id: set-matrix
         run: |
-          if [[ "${{ inputs.multiregion }}" == "true" ]]; then
+          if [[ "${{ github.event.inputs.multiregion }}" == "true" ]]; then
             echo 'regions=["${{ env.PRIMARY_REGION }}", "${{ env.SECONDARY_REGION }}"]' >> $GITHUB_OUTPUT
           else
             echo 'regions=["${{ env.PRIMARY_REGION }}"]' >> $GITHUB_OUTPUT
@@ -64,10 +73,10 @@ jobs:
   deploy-apps:
     needs: [provision-infra, generate-matrix]
     runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.environment }}
     strategy:
       matrix:
         region: ${{ fromJSON(needs.generate-matrix.outputs.regions) }}
-      # Don't cancel other regions if one fails
       fail-fast: false 
     
     steps:
@@ -79,7 +88,7 @@ jobs:
         with:
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          subscription-id: ${{ env.AZURE_SUBSCRIPTION_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
       - name: Deploy React App (${{ matrix.region }})
         uses: wnadim92/azure-employee-tracking-system/.github/actions/react-appsvc-deploy@main
@@ -87,7 +96,7 @@ jobs:
           TARGET_ENVIRONMENT: ${{ env.ENV }}
           APP_SVC_NAME: "emptrack-${{ env.ENV }}-${{ matrix.region }}-appsvc"
 
-      - name: Deploy Python Function (${{ matrix.region }})
+      - name: Deploy FastAPI Python Function (${{ matrix.region }})
         uses: wnadim92/azure-employee-tracking-system/.github/actions/docker-build-funcapp-deploy@main
         with:
           TARGET_ENVIRONMENT: ${{ env.ENV }}

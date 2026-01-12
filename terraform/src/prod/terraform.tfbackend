@@ -1,0 +1,4 @@
+resource_group_name  = "testingforwork"
+storage_account_name = "samscliandtfstatestrg"
+container_name       = "tfstate"
+key                  = "prod.terraform.tfstate"
