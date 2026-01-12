@@ -1,5 +1,5 @@
-azure-functions
-fastapi
-uvicorn
-azure-cosmos
-azure-identity
+azure-functions==1.21.3
+fastapi==0.115.6
+uvicorn==0.34.0
+azure-cosmos==4.9.0
+azure-identity==1.19.0

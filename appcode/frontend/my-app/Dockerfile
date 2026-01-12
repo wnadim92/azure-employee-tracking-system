@@ -1,5 +1,5 @@
 # Stage 1: Build the React application
-FROM node:22-alpine AS build
+FROM node:22.12.0-alpine AS build
 
 # Set the working directory inside the container
 WORKDIR /app
@@ -22,7 +22,7 @@ ENV REACT_APP_API_BASE_URL=$REACT_APP_API_BASE_URL
 RUN npm run build
 
 # Stage 2: Serve the application with Nginx
-FROM nginx:alpine
+FROM nginx:1.27.3-alpine
 
 # Remove default Nginx static assets
 RUN rm -rf /usr/share/nginx/html/*
