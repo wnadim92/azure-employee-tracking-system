@@ -7,7 +7,9 @@ function App() {
     name: '',
     role: '',
     address: '',
-    hireDate: ''
+    hireDate: '',
+    dob: '',
+    manager: ''
   });
 
   // Access the environment variable injected by Docker
@@ -48,7 +50,7 @@ function App() {
 
       if (response.ok) {
         await fetchEmployees(); // Refresh list
-        setFormData({ name: '', role: '', address: '', hireDate: '' }); // Reset form
+        setFormData({ name: '', role: '', address: '', hireDate: '', dob: '', manager: '' }); // Reset form
       } else {
         console.error('Failed to save employee');
       }
@@ -84,10 +86,30 @@ function App() {
         <section className="form-section">
           <h2>Add New Employee</h2>
           <form onSubmit={handleSubmit} className="employee-form">
-            <input name="name" placeholder="Name" value={formData.name} onChange={handleInputChange} required />
-            <input name="role" placeholder="Role" value={formData.role} onChange={handleInputChange} />
-            <input name="address" placeholder="Address" value={formData.address} onChange={handleInputChange} />
-            <input name="hireDate" type="date" placeholder="Hire Date" value={formData.hireDate} onChange={handleInputChange} />
+            <div className="form-group">
+              <label>Name</label>
+              <input name="name" placeholder="Name" value={formData.name} onChange={handleInputChange} required />
+            </div>
+            <div className="form-group">
+              <label>Role</label>
+              <input name="role" placeholder="Role" value={formData.role} onChange={handleInputChange} />
+            </div>
+            <div className="form-group">
+              <label>Address</label>
+              <input name="address" placeholder="Address" value={formData.address} onChange={handleInputChange} />
+            </div>
+            <div className="form-group">
+              <label>Hire Date</label>
+              <input name="hireDate" type="date" value={formData.hireDate} onChange={handleInputChange} />
+            </div>
+            <div className="form-group">
+              <label>Birthday</label>
+              <input name="dob" type="date" value={formData.dob} onChange={handleInputChange} />
+            </div>
+            <div className="form-group">
+              <label>Manager</label>
+              <input name="manager" placeholder="Manager Name" value={formData.manager} onChange={handleInputChange} />
+            </div>
             <button type="submit">Add Employee</button>
           </form>
         </section>
@@ -102,6 +124,8 @@ function App() {
                 <li key={emp.id} className="employee-item">
                   <div className="employee-info">
                     <strong>{emp.name}</strong> <span>({emp.role})</span>
+                    <br/>
+                    <small>Manager: {emp.manager || 'N/A'} | Hired: {emp.hireDate} | DOB: {emp.dob}</small>
                   </div>
                   <button onClick={() => handleDelete(emp.id)} className="delete-btn">Delete</button>
                 </li>

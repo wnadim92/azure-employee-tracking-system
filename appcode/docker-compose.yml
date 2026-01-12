@@ -13,6 +13,11 @@ services:
       - "10251-10254:10251-10254"
     volumes:
       - cosmos_data:/data/db
+    healthcheck:
+      test: ["CMD-SHELL", "curl -k https://localhost:8081/_explorer/index.html || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 15
 
   api:
     build:
@@ -28,8 +33,11 @@ services:
       - AzureFunctionsJobHost__CORS__AllowedOrigins=*
       - AzureFunctionsJobHost__CORS__SupportCredentials=true
     depends_on:
-      - cosmosdb
+      cosmosdb:
+        condition: service_healthy
     restart: on-failure
+    volumes:
+      - ./backend/my-app:/home/site/wwwroot
 
   frontend:
     build:
