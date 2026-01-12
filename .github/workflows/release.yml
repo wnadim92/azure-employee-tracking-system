@@ -1,4 +1,4 @@
-name: Deploy Infrastructure and Three Tier App for Employee Tracking Web Application
+name: HR Tracking Full Stack Azure Application
 
 on:
   workflow_dispatch:

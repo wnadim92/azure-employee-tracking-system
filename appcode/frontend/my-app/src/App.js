@@ -4,6 +4,7 @@ import './App.css';
 function App() {
   const [employees, setEmployees] = useState([]);
   const [formData, setFormData] = useState({
+    id: null,
     name: '',
     role: '',
     address: '',
@@ -40,17 +41,23 @@ function App() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      const payload = { ...formData };
+      // Remove id if it's null/empty so backend generates a new one for creates
+      if (!payload.id) {
+        delete payload.id;
+      }
+
       const response = await fetch(`${API_BASE}/employee`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(payload),
       });
 
       if (response.ok) {
         await fetchEmployees(); // Refresh list
-        setFormData({ name: '', role: '', address: '', hireDate: '', dob: '', manager: '' }); // Reset form
+        handleCancel(); // Reset form
       } else {
         console.error('Failed to save employee');
       }
@@ -77,6 +84,22 @@ function App() {
     }
   };
 
+  const handleEdit = (emp) => {
+    setFormData({
+      id: emp.id,
+      name: emp.name,
+      role: emp.role || '',
+      address: emp.address || '',
+      hireDate: emp.hireDate || '',
+      dob: emp.dob || '',
+      manager: emp.manager || ''
+    });
+  };
+
+  const handleCancel = () => {
+    setFormData({ id: null, name: '', role: '', address: '', hireDate: '', dob: '', manager: '' });
+  };
+
   return (
     <div className="App">
       <header className="App-header">
@@ -84,7 +107,7 @@ function App() {
       </header>
       <main className="container">
         <section className="form-section">
-          <h2>Add New Employee</h2>
+          <h2>{formData.id ? 'Edit Employee' : 'Add New Employee'}</h2>
           <form onSubmit={handleSubmit} className="employee-form">
             <div className="form-group">
               <label>Name</label>
@@ -110,7 +133,10 @@ function App() {
               <label>Manager</label>
               <input name="manager" placeholder="Manager Name" value={formData.manager} onChange={handleInputChange} />
             </div>
-            <button type="submit">Add Employee</button>
+            <div className="form-actions">
+              <button type="submit">{formData.id ? 'Update Employee' : 'Add Employee'}</button>
+              {formData.id && <button type="button" onClick={handleCancel} className="cancel-btn">Cancel</button>}
+            </div>
           </form>
         </section>
 
@@ -127,7 +153,10 @@ function App() {
                     <br/>
                     <small>Manager: {emp.manager || 'N/A'} | Hired: {emp.hireDate} | DOB: {emp.dob}</small>
                   </div>
-                  <button onClick={() => handleDelete(emp.id)} className="delete-btn">Delete</button>
+                  <div className="item-actions">
+                    <button onClick={() => handleEdit(emp)} className="edit-btn">Edit</button>
+                    <button onClick={() => handleDelete(emp.id)} className="delete-btn">Delete</button>
+                  </div>
                 </li>
               ))}
             </ul>
