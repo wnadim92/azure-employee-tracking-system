@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import './App.css';
 
 function App() {
+  const [theme, setTheme] = useState('dark');
   const [employees, setEmployees] = useState([]);
   const [formData, setFormData] = useState({
     id: null,
@@ -19,6 +20,10 @@ function App() {
   useEffect(() => {
     fetchEmployees();
   }, []);
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+  }, [theme]);
 
   const fetchEmployees = async () => {
     try {
@@ -100,10 +105,17 @@ function App() {
     setFormData({ id: null, name: '', role: '', address: '', hireDate: '', dob: '', manager: '' });
   };
 
+  const toggleTheme = () => {
+    setTheme(prev => prev === 'dark' ? 'light' : 'dark');
+  };
+
   return (
     <div className="App">
       <header className="App-header">
         <h1>Employee Tracking System</h1>
+        <button onClick={toggleTheme} className="theme-toggle">
+          {theme === 'dark' ? '☀️ Light Mode' : '🌙 Dark Mode'}
+        </button>
       </header>
       <main className="container">
         <section className="form-section">
