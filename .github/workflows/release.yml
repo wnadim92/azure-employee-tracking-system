@@ -91,6 +91,7 @@ jobs:
         uses: wnadim92/azure-employee-tracking-system/.github/actions/react-appsvc-deploy@main
         with:
           TARGET_ENVIRONMENT: ${{ env.ENV }}
+          PROJECT_PATH: 'appcode/frontend/my-app'
           APP_SVC_NAME: "emptrack-${{ env.ENV }}-${{ matrix.region }}-appsvc"
 
       - name: Deploy FastAPI Python Function (${{ matrix.region }})

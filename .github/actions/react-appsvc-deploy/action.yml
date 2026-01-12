@@ -11,6 +11,10 @@ inputs:
     description: 'Node version'
     required: false
     default: "22.x"
+  PROJECT_PATH:
+    description: 'Subdirectory of the React app'
+    required: false
+    default: 'appcode/frontend/my-app'
 
 runs:
     using: "composite"
@@ -19,19 +23,22 @@ runs:
           uses: actions/setup-node@v4 
           with:
             node-version: ${{ inputs.NODE_VERSION }}
+            cache-dependency-path: ${{ inputs.PROJECT_PATH }}/package-lock.json
 
         - name: install dependencies
           shell: bash
-          run: npm ci 
+          run: npm install 
+          working-directory: ${{ inputs.PROJECT_PATH }}
 
         - name: build 
           shell: bash
           run: |
             echo "building react app"
             npm run build  
+          working-directory: ${{ inputs.PROJECT_PATH }}
 
         - name: deploy to azure
           uses: azure/webapps-deploy@v3 
           with:
             app-name: ${{ inputs.APP_SVC_NAME }}
-            package: './build' 
+            package: '${{ inputs.PROJECT_PATH }}/build' 
