@@ -23,8 +23,6 @@ module "emp_track_middletier_vnetintegration_snet" {
   delegation_service = "Microsoft.Web/serverFarms"
 }
 
-
-
 #db pe subnet
 module "emp_track_db_pe_snet" {
   source      = "../../modules/subnet"

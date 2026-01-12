@@ -1,6 +1,7 @@
 project_name                                                         = "emptrack"
 environment                                                          = "nonprod"
-
+docker_registry_url                                                  = "snadim92"
+image_name                                                           = "emptrack-backend"
 shouldBeMultiRegion                                                  = false
 
 #primary region

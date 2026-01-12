@@ -15,6 +15,14 @@ variable "environment" {
   description = "The name of the environment (dev, uat, ... prod)"
 }
 
+variable "docker_registry_url" {
+    type = string
+}
+
+variable "image_name" {
+    type = string
+}
+
 variable "vnet_address_spaces" {
   type        = list(string)
   default     = ["10.0.0.0/16"]

@@ -3,6 +3,14 @@ variable "funcapp_name" {
   type        = string
 }
 
+variable "docker_registry_url" {
+    type = string
+}
+
+variable "image_name" {
+    type = string
+}
+
 variable "rg_name" {
   type        = string
   description = "The name of the resource group."
@@ -35,6 +43,14 @@ variable "cosmosdb_endpoint" {
 }
 
 variable "uami_resource_id" {
+  type        = string
+}
+
+variable "uami_client_id" {
+  type        = string
+} 
+
+variable "uami_principal_id" {
   type        = string
 }
 
