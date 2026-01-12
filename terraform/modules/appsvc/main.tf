@@ -4,8 +4,8 @@ resource "azurerm_service_plan" "this" {
   resource_group_name = var.rg_name
   location            = var.region
   os_type             = "Linux"
-  
-  sku_name = "S1" 
+
+  sku_name = "S1"
 }
 
 resource "azurerm_linux_web_app" "this" {
@@ -23,13 +23,13 @@ resource "azurerm_linux_web_app" "this" {
 
   site_config {
     vnet_route_all_enabled = true
-    
+
     application_stack {
       docker_image_name = "${var.docker_registry_url}/${var.image_name}:latest"
     }
   }
 
   app_settings = {
-    "WEBSITE_DNS_SERVER"     = "168.63.129.16" # Required for Azure DNS
+    "WEBSITE_DNS_SERVER" = "168.63.129.16" # Required for Azure DNS
   }
 }

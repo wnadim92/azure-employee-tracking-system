@@ -16,7 +16,7 @@ variable "environment" {
 }
 
 variable "docker_registry_url" {
-    type = string
+  type = string
 }
 
 variable "frontend_image_name" {}

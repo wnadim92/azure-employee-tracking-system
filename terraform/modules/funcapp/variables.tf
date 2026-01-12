@@ -1,14 +1,14 @@
 
 variable "funcapp_name" {
-  type        = string
+  type = string
 }
 
 variable "docker_registry_url" {
-    type = string
+  type = string
 }
 
 variable "image_name" {
-    type = string
+  type = string
 }
 
 variable "rg_name" {
@@ -39,33 +39,33 @@ variable "sites_dns_zone_id" {
 }
 
 variable "cosmosdb_endpoint" {
-  type        = string
+  type = string
 }
 
 variable "uami_resource_id" {
-  type        = string
+  type = string
 }
 
 variable "uami_client_id" {
-  type        = string
-} 
+  type = string
+}
 
 variable "uami_principal_id" {
-  type        = string
+  type = string
 }
 
 variable "blob_dns_zone_id" {
-  type        = string
+  type = string
 }
 
 variable "file_dns_zone_id" {
-  type        = string
+  type = string
 }
 
 variable "table_dns_zone_id" {
-  type        = string
+  type = string
 }
 
 variable "queue_dns_zone_id" {
-  type        = string
+  type = string
 }

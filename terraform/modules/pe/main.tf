@@ -4,7 +4,7 @@ resource "azurerm_private_endpoint" "this" {
   location            = var.region
   resource_group_name = var.rg_name
   # Link directly to the ID output of your subnet module
-  subnet_id           = var.subnet_id
+  subnet_id = var.subnet_id
 
   private_service_connection {
     name                           = "${var.resource_name}-privatelink"

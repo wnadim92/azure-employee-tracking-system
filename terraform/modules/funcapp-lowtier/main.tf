@@ -1,9 +1,9 @@
 resource "azurerm_service_plan" "this" {
-  name                = "${var.funcapp_name}-plan" 
+  name                = "${var.funcapp_name}-plan"
   resource_group_name = var.rg_name
   location            = var.region
   os_type             = "Linux"
-  sku_name            = "F1" 
+  sku_name            = "Y1"
 }
 
 resource "azurerm_linux_function_app" "this" {
@@ -11,9 +11,9 @@ resource "azurerm_linux_function_app" "this" {
   resource_group_name = var.rg_name
   location            = var.region
 
-  service_plan_id       = azurerm_service_plan.this.id
-  storage_account_name  = module.storage.storage_account_name
-  
+  service_plan_id      = azurerm_service_plan.this.id
+  storage_account_name = module.storage.storage_account_name
+
   storage_uses_managed_identity = true
 
   identity {
@@ -22,15 +22,15 @@ resource "azurerm_linux_function_app" "this" {
   }
 
   app_settings = {
-    "AzureWebJobsStorage__accountName"    = module.storage.storage_account_name
-    "AzureWebJobsStorage__credential"     = "managedidentity"
-    "AzureWebJobsStorage__clientId"       = var.uami_client_id
-    
+    "AzureWebJobsStorage__accountName" = module.storage.storage_account_name
+    "AzureWebJobsStorage__credential"  = "managedidentity"
+    "AzureWebJobsStorage__clientId"    = var.uami_client_id
+
     "CosmosDbConnection__accountEndpoint" = var.cosmosdb_endpoint
     "CosmosDbConnection__credential"      = "managedidentity"
     "CosmosDbConnection__clientId"        = var.uami_client_id
-    
-    "AZURE_CLIENT_ID"               = var.uami_client_id
+
+    "AZURE_CLIENT_ID" = var.uami_client_id
     # "WEBSITE_CONTENTOVERVNET"       = "1" # Not supported in Y1
     # WEBSITE_VNET_ROUTE_ALL is now handled in site_config
     "SCM_DO_BUILD_DURING_DEPLOYMENT" = "true"
@@ -39,7 +39,8 @@ resource "azurerm_linux_function_app" "this" {
 
   site_config {
     vnet_route_all_enabled = false
-    
+    always_on              = false
+
     # IF NOT USING DOCKER (Python):
     application_stack {
       python_version = "3.11"
@@ -58,14 +59,14 @@ resource "azurerm_linux_function_app" "this" {
 
 # 1. The Storage Module (Infrastructure for the Function)
 module "storage" {
-  source               = "../storage"
-  strg_name            = lower(substr(replace(var.funcapp_name, "-", ""), 0, 24))
-  rg_name              = var.rg_name
-  region               = var.region
-  subnet_id            = var.pe_subnet_id
-  principal_id         = var.uami_principal_id
-  blob_dns_zone_id     = var.blob_dns_zone_id
-  file_dns_zone_id     = var.file_dns_zone_id
-  table_dns_zone_id    = var.table_dns_zone_id
-  queue_dns_zone_id    = var.queue_dns_zone_id
+  source            = "../storage"
+  strg_name         = lower(substr(replace(var.funcapp_name, "-", ""), 0, 24))
+  rg_name           = var.rg_name
+  region            = var.region
+  subnet_id         = var.pe_subnet_id
+  principal_id      = var.uami_principal_id
+  blob_dns_zone_id  = var.blob_dns_zone_id
+  file_dns_zone_id  = var.file_dns_zone_id
+  table_dns_zone_id = var.table_dns_zone_id
+  queue_dns_zone_id = var.queue_dns_zone_id
 }

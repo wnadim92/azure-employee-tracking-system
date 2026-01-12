@@ -4,8 +4,8 @@ resource "azurerm_service_plan" "this" {
   resource_group_name = var.rg_name
   location            = var.region
   os_type             = "Linux"
-  
-  sku_name = "F1" 
+
+  sku_name = "F1"
 }
 
 resource "azurerm_linux_web_app" "this" {

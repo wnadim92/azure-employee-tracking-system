@@ -22,19 +22,19 @@ variable "subnet_id" {
 }
 
 variable "blob_dns_zone_id" {
-  type        = string
+  type = string
 }
 
 variable "file_dns_zone_id" {
-  type        = string
+  type = string
 }
 
 variable "table_dns_zone_id" {
-  type        = string
+  type = string
 }
 
 variable "queue_dns_zone_id" {
-  type        = string
+  type = string
 }
 
 variable "principal_id" {

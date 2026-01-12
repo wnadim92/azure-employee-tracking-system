@@ -6,15 +6,15 @@ variable "rg_name" {
 
 
 variable "app_svc_name" {
-  type        = string
+  type = string
 }
 
 variable "docker_registry_url" {
-    type = string
+  type = string
 }
 
 variable "image_name" {
-    type = string
+  type = string
 }
 
 variable "region" {
@@ -24,5 +24,5 @@ variable "region" {
 }
 
 variable "uami_resource_id" {
-  type        = string
+  type = string
 }

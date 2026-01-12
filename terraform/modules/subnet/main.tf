@@ -30,5 +30,5 @@ module "nsg" {
 resource "azurerm_subnet_network_security_group_association" "this" {
   subnet_id                 = azurerm_subnet.this.id
   network_security_group_id = module.nsg.nsg_id
-  depends_on = [ module.nsg ]
+  depends_on                = [module.nsg]
 }
