@@ -40,19 +40,26 @@ runs:
     - name: deploy terraform
       shell: bash
       working-directory: ${{ inputs.CHECKOUT_PATH }}/${{ inputs.WORKING_DIRECTORY }}
-      env:
-        TF_VAR_primary_region: ${{ inputs.REGION }}
       run: |
         # Use -reconfigure to ensure backend stays fresh
         terraform init -reconfigure -backend-config="${{ inputs.TARGET_ENVIRONMENT }}/terraform.tfbackend"
 
-        # Construct var arguments if RESOURCE_NAME is provided
-        VAR_ARGS=""
+        # Construct var arguments (CLI -var overrides tfvars)
+        VAR_ARGS="-var primary_region=${{ inputs.REGION }}"
+        
         if [ -n "${{ inputs.FUNCAPP_NAME }}" ]; then
           VAR_ARGS="$VAR_ARGS -var funcapp_name=${{ inputs.FUNCAPP_NAME }}"
         fi
         if [ -n "${{ inputs.WEBAPP_NAME }}" ]; then
           VAR_ARGS="$VAR_ARGS -var webapp_name=${{ inputs.WEBAPP_NAME }}"
+        fi
+
+        # Pass environment variables as -var to override tfvars
+        if [ -n "$TF_VAR_secondary_region" ]; then
+          VAR_ARGS="$VAR_ARGS -var secondary_region=$TF_VAR_secondary_region"
+        fi
+        if [ -n "$TF_VAR_shouldBeMultiRegion" ]; then
+          VAR_ARGS="$VAR_ARGS -var shouldBeMultiRegion=$TF_VAR_shouldBeMultiRegion"
         fi
 
         if [ "${{ inputs.DESTROY }}" == "true" ]; then
