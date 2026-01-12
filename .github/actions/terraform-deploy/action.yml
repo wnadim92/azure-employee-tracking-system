@@ -47,7 +47,7 @@ runs:
         # Construct var arguments if RESOURCE_NAME is provided
         VAR_ARGS=""
         if [ -n "${{ inputs.RESOURCE_NAME }}" ]; then
-          VAR_ARGS="-var=\"funcapp_name=${{ inputs.RESOURCE_NAME }}\""
+          VAR_ARGS="-var funcapp_name=${{ inputs.RESOURCE_NAME }}"
         fi
 
         if [ "${{ inputs.DESTROY }}" == "true" ]; then
