@@ -1,9 +1,8 @@
 name: 'Docker Build and Deploy to Azure Function App'
 description: 'Builds a Docker Container, pushes to Registry, and deploys to Azure Function App'
 inputs:
-  # Registry Inputs
   REGISTRY_LOGIN_SERVER:
-    description: 'Container Registry URL (e.g., myacr.azurecr.io or index.docker.io)'
+    description: 'Container Registry URL'
     required: true
   REGISTRY_USERNAME:
     description: 'Registry Username'
@@ -12,22 +11,29 @@ inputs:
     description: 'Registry Password'
     required: true
   IMAGE_NAME:
-    description: 'Repository/Image Name (e.g., my-function-app)'
+    description: 'Repository/Image Name'
     required: true
   IMAGE_TAG:
     description: 'Tag for the image'
     required: false
     default: 'latest'
-    
-  # Deployment Inputs
   FUNC_APP_NAME:
     description: 'The Azure Function App name'
     required: true
+  # Added input for Azure Authentication
+  AZURE_CREDENTIALS:
+    description: 'JSON object containing Service Principal credentials'
+    required: false
 
 runs:
   using: "composite"
   steps:
-    # 1. Log in to the Container Registry (ACR or Docker Hub)
+    - name: Azure Login
+      if: ${{ inputs.AZURE_CREDENTIALS != '' }}
+      uses: azure/login@v2 
+      with:
+        creds: ${{ inputs.AZURE_CREDENTIALS }}
+
     - name: Docker Login
       uses: docker/login-action@v3
       with:
@@ -35,33 +41,16 @@ runs:
         username: ${{ inputs.REGISTRY_USERNAME }}
         password: ${{ inputs.REGISTRY_PASSWORD }}
 
-    # 2. Build and Push the Image
     - name: Build and Push Docker Image
       shell: bash
       run: |
         FULL_IMAGE_PATH="${{ inputs.REGISTRY_LOGIN_SERVER }}/${{ inputs.IMAGE_NAME }}:${{ inputs.IMAGE_TAG }}"
-        echo "Building and pushing $FULL_IMAGE_PATH..."
-        
         docker build -t $FULL_IMAGE_PATH .
         docker push $FULL_IMAGE_PATH
-        
-        # Export for the next step
         echo "FULL_IMAGE_PATH=$FULL_IMAGE_PATH" >> $GITHUB_ENV
 
-    # 3. Deploy to Azure Function App (Container)
     - name: Deploy to Azure Function
       uses: Azure/functions-container-action@v1
       with:
         app-name: ${{ inputs.FUNC_APP_NAME }}
         image: ${{ env.FULL_IMAGE_PATH }}
-
-    # - name: Update Function App Image (CLI Fallback)
-    #   shell: bash
-    #   run: |
-    #     az functionapp config container set \
-    #       --name ${{ inputs.FUNC_APP_NAME }} \
-    #       --resource-group <YOUR_RG_IF_KNOWN> \
-    #       --image ${{ env.FULL_IMAGE_PATH }} \
-    #       --registry-server ${{ inputs.REGISTRY_LOGIN_SERVER }} \
-    #       --registry-username ${{ inputs.REGISTRY_USERNAME }} \
-    #       --registry-password ${{ inputs.REGISTRY_PASSWORD }}
