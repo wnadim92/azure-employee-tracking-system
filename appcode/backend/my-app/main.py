@@ -76,7 +76,7 @@ def get_container():
     raise Exception(f"Could not connect to Cosmos DB after multiple attempts. Last error: {last_error}")
 
 class Employee(BaseModel):
-    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    id: Optional[str] = None
     name: str
     address: Optional[str] = None
     dob: Optional[str] = None
@@ -91,7 +91,8 @@ class Employee(BaseModel):
 def get_employees():
     container = get_container()
     employees = []
-    items = container.query_items(query="SELECT * FROM c", enable_cross_partition_query=True)
+    # Filter out the counter document
+    items = container.query_items(query="SELECT * FROM c WHERE c.id != 'employee_id_counter'", enable_cross_partition_query=True)
     for item in items:
         employees.append(Employee(**item))
     return employees
@@ -99,6 +100,21 @@ def get_employees():
 @router.post("/employee")
 def save_employee(emp: Employee) -> Employee:
     container = get_container()
+
+    if emp.id is None:
+        from azure.core.exceptions import ResourceNotFoundError
+        # Simple auto-increment logic using a counter document
+        counter_id = "employee_id_counter"
+        try:
+            counter_doc = container.read_item(item=counter_id, partition_key=counter_id)
+        except ResourceNotFoundError:
+            counter_doc = {"id": counter_id, "last_id": 0}
+        
+        new_id = int(counter_doc.get("last_id", 0)) + 1
+        counter_doc["last_id"] = new_id
+        container.upsert_item(counter_doc)
+        emp.id = str(new_id)
+
     # upsert_item handles both Create and Update
     created_item = container.upsert_item(emp.model_dump(by_alias=True))
     return Employee(**created_item)
