@@ -90,13 +90,13 @@ jobs:
           REGION: ${{ env.PRIMARY_REGION }}
           DESTROY: ${{ github.event.inputs.destroy }}
           TARGET_RESOURCE_TYPE: 'function'
-          IMAGES: '${{ secrets.REGISTRY_USERNAME }}/emptrack-backend:latest'
+          PACKAGE_PATH: 'appcode/backend/my-app'
         env:
           ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
           TF_VAR_shouldBeMultiRegion: ${{ github.event.inputs.multiregion }}
           TF_VAR_secondary_region: ${{ env.SECONDARY_REGION }}
 
-      - name: Deploy Frontend (Code Only)
+      - name: Deploy Frontend 
         uses: ./.github/actions/webapp-deploy
         if: github.event.inputs.destroy != 'true'
         with:
