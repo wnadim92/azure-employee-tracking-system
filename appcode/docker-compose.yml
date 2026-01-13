@@ -30,7 +30,7 @@ services:
       - COSMOS_DB_KEY=C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==
       - AzureWebJobsScriptRoot=/home/site/wwwroot
       - AzureFunctionsJobHost__Logging__Console__IsEnabled=true
-      - AzureWebJobsStorage="" # Suppress missing storage warnings for local dev
+      - AzureWebJobsStorage=UseDevelopmentStorage=true
       - AzureFunctionsJobHost__CORS__AllowedOrigins=*
       - AzureFunctionsJobHost__CORS__SupportCredentials=true
     depends_on:

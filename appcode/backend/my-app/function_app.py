@@ -1,10 +1,13 @@
 import azure.functions as func
 import logging
+import sys
 
 try:
+    print("Attempting to import FastAPI app...", file=sys.stdout)
     from azure.functions import AsgiFunctionApp
     from main import app as fastapi_app
     app = AsgiFunctionApp(app=fastapi_app, http_auth_level=func.AuthLevel.ANONYMOUS)
+    print("FastAPI app imported successfully.", file=sys.stdout)
 except Exception as e:
     logging.critical(f"Failed to load FastAPI app: {e}")
     # Fallback function to report the startup error
