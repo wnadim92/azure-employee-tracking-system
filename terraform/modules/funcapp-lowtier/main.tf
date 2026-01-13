@@ -43,8 +43,6 @@ resource "azurerm_linux_function_app" "this" {
 
     "AZURE_CLIENT_ID" = var.uami_client_id
     # WEBSITE_VNET_ROUTE_ALL is now handled in site_config
-    "SCM_DO_BUILD_DURING_DEPLOYMENT" = "true"
-    "ENABLE_ORYX_BUILD"              = "true"
   }
 
   site_config {

@@ -11,6 +11,10 @@ from pydantic import BaseModel, Field
 app = FastAPI()
 router = APIRouter()
 
+@app.get("/health")
+def health_check():
+    return {"status": "ok", "environment": "Azure Functions"}
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
