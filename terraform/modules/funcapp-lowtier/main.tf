@@ -1,10 +1,4 @@
 
-resource "azurerm_storage_share" "content" {
-  name                 = "${lower(substr(replace(var.funcapp_name, "-", ""), 0, 20))}-content"
-  storage_account_id   = module.storage.storage_account_id
-  quota                = 50
-}
-
 resource "azurerm_service_plan" "this" {
   name                = "${var.funcapp_name}-plan"
   resource_group_name = var.rg_name
@@ -31,9 +25,9 @@ resource "azurerm_linux_function_app" "this" {
 
   app_settings = {
     "AzureWebJobsStorage"                                = module.storage.primary_connection_string
-    "WEBSITE_DNS_SERVER"                                 = "168.63.129.16"
-    "DOCKER_REGISTRY_SERVER_URL"                         = "https://index.docker.io"
-    "WEBSITE_SKIP_CONTENT_SHARE_VALIDATION"              = "1"
+    "WEBSITE_DNS_SERVER"                       = "168.63.129.16"
+    "DOCKER_REGISTRY_SERVER_URL"               = "https://index.docker.io"
+    "WEBSITE_SKIP_CONTENT_SHARE_VALIDATION"    = "1"
     "AzureFunctionsJobHost__Logging__Console__IsEnabled" = "true"
     "FUNCTIONS_WORKER_RUNTIME"                           = "python"
     "WEBSITE_CONTENTOVERVNET"                            = "1"
