@@ -79,3 +79,5 @@ variable "public_network_access_enabled" {
   description = "have function app still vnet integrate but not have it on private endpoint, and allow storage public access. Supports deployment from GitHub Actions"
   default     = false
 }
+
+variable "sites_dns_zone_id" {}

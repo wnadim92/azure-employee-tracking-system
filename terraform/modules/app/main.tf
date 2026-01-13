@@ -32,6 +32,7 @@ module "emp_track_middle_funcapp" {
   file_dns_zone_id               = azurerm_private_dns_zone.file.id
   table_dns_zone_id              = azurerm_private_dns_zone.table.id
   queue_dns_zone_id              = azurerm_private_dns_zone.queue.id
+  sites_dns_zone_id              = azurerm_private_dns_zone.web.id
 }
 
 module "emp_track_managed_identity" {
