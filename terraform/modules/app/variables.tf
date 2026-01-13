@@ -63,3 +63,5 @@ variable "emp_track_db_snet_cidr" {
   type        = string
   description = "The cidr for the db subnet"
 }
+
+variable "image_tag" {}
