@@ -1,7 +1,7 @@
 
 resource "azurerm_storage_share" "content" {
   name                 = "${lower(substr(replace(var.funcapp_name, "-", ""), 0, 20))}-content"
-  storage_account_name = module.storage.storage_account_name
+  storage_account_id   = module.storage.storage_account_id
   quota                = 50
 }
 
@@ -52,6 +52,7 @@ resource "azurerm_linux_function_app" "this" {
     vnet_route_all_enabled = true
     always_on              = true
     health_check_path      = "/api/health"
+    health_check_eviction_time_in_min = 2
 
     cors {
       allowed_origins     = var.allowed_origins
