@@ -28,6 +28,9 @@ inputs:
     description: 'Path to the code package to deploy'
     required: false
     default: '.'
+  IMAGES:
+    description: 'Docker Image to deploy (e.g., myregistry.azurecr.io/myimage:latest)'
+    required: false
   DEPLOY_TARGET_NAME:
     description: 'Name of the specific App Service/Function to deploy code to'
     required: false
@@ -68,4 +71,5 @@ runs:
       uses: azure/webapps-deploy@v2
       with:
         app-name: ${{ steps.target.outputs.name }}
-        package: ${{ inputs.PACKAGE_PATH }}
+        package: ${{ inputs.IMAGES == '' && inputs.PACKAGE_PATH || '' }}
+        images: ${{ inputs.IMAGES }}
