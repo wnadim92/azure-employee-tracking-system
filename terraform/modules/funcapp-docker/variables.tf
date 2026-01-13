@@ -76,6 +76,6 @@ variable "allowed_origins" {
 
 variable "public_network_access_enabled" {
   type        = bool
-  descriptoin = "have function app still vnet integrate but not have it on private endpoint, and allow storage public access. Supports deployment from GitHub Actions"
+  description = "have function app still vnet integrate but not have it on private endpoint, and allow storage public access. Supports deployment from GitHub Actions"
   default     = false
-}"
+}
