@@ -1,7 +1,7 @@
 azure-functions
 fastapi
-uvicorn==0.34.0
-azure-cosmos==4.9.0
-azure-identity==1.19.0
+uvicorn
+azure-cosmos
+azure-identity
 pydantic
 azure-core
