@@ -57,6 +57,7 @@ jobs:
           REGISTRY_PASSWORD: ${{ secrets.REGISTRY_PASSWORD }}
           IMAGE_NAME: "emptrack-backend"
           PROJECT_PATH: 'appcode/backend/my-app'   
+          IMAGE_TAG: ${{ github.sha }}
 
       - name: Build React App
         uses: ./.github/actions/docker-build
@@ -66,6 +67,7 @@ jobs:
           REGISTRY_PASSWORD: ${{ secrets.REGISTRY_PASSWORD }}
           IMAGE_NAME: "emptrack-frontend"
           PROJECT_PATH: 'appcode/frontend/my-app'    
+          IMAGE_TAG: ${{ github.sha }}
 
   provision-infra:
     needs: [build-images]
@@ -81,30 +83,16 @@ jobs:
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
-      - name: Deploy Backend (Infra + Code)
-        uses: ./.github/actions/webapp-deploy
+      - name: Deploy Infrastructure
+        uses: ./.github/actions/terraform-deploy
         with:
           TARGET_ENVIRONMENT: '${{ env.ENV }}'
           CHECKOUT_PATH: .
           WORKING_DIRECTORY: 'terraform/src'
           REGION: ${{ env.PRIMARY_REGION }}
           DESTROY: ${{ github.event.inputs.destroy }}
-          TARGET_RESOURCE_TYPE: 'function'
-          IMAGES: '${{ secrets.REGISTRY_USERNAME }}/emptrack-backend:${{ github.sha }}'
           IMAGE_TAG: ${{ github.sha }}
         env:
           ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
           TF_VAR_shouldBeMultiRegion: ${{ github.event.inputs.multiregion }}
           TF_VAR_secondary_region: ${{ env.SECONDARY_REGION }}
-
-      - name: Deploy Frontend 
-        uses: ./.github/actions/webapp-deploy
-        if: github.event.inputs.destroy != 'true'
-        with:
-          TARGET_ENVIRONMENT: '${{ env.ENV }}'
-          CHECKOUT_PATH: .
-          WORKING_DIRECTORY: 'terraform/src'
-          REGION: ${{ env.PRIMARY_REGION }}
-          TARGET_RESOURCE_TYPE: 'web'
-          IMAGES: '${{ secrets.REGISTRY_USERNAME }}/emptrack-frontend:${{ github.sha }}'
-          IMAGE_TAG: ${{ github.sha }}

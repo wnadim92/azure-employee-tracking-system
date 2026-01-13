@@ -57,6 +57,7 @@ jobs:
           REGISTRY_PASSWORD: ${{ secrets.REGISTRY_PASSWORD }}
           IMAGE_NAME: "emptrack-backend"
           PROJECT_PATH: 'appcode/backend/my-app'   
+          IMAGE_TAG: ${{ github.sha }}
 
       - name: Build React App
         uses: ./.github/actions/docker-build
@@ -66,6 +67,7 @@ jobs:
           REGISTRY_PASSWORD: ${{ secrets.REGISTRY_PASSWORD }}
           IMAGE_NAME: "emptrack-frontend"
           PROJECT_PATH: 'appcode/frontend/my-app'    
+          IMAGE_TAG: ${{ github.sha }}
 
   provision-infra:
     needs: [build-images]

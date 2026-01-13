@@ -25,3 +25,4 @@ variable "secondary_region_emp_track_db_snet_cidr" {}
 variable "frontend_image_name" {}
 variable "backend_image_name" {}
 variable "docker_registry_url" {}
+variable "image_tag" {}
