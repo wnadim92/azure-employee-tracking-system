@@ -81,7 +81,7 @@ class Employee(BaseModel):
     class Config:
         populate_by_name = True
 
-@app.get("/api/employees", response_model=List[Employee])
+@app.get("/employees", response_model=List[Employee])
 def get_employees():
     container = get_container()
     employees = []
@@ -90,14 +90,14 @@ def get_employees():
         employees.append(Employee(**item))
     return employees
 
-@app.post("/api/employee")
+@app.post("/employee")
 def save_employee(emp: Employee) -> Employee:
     container = get_container()
     # upsert_item handles both Create and Update
     created_item = container.upsert_item(emp.model_dump(by_alias=True))
     return Employee(**created_item)
 
-@app.get("/api/employees/{employee_id}", response_model=Employee)
+@app.get("/employees/{employee_id}", response_model=Employee)
 def get_employee_by_id(employee_id: str):
     container = get_container()
     try:
@@ -108,7 +108,7 @@ def get_employee_by_id(employee_id: str):
     except ResourceNotFoundError:
         raise HTTPException(status_code=404, detail="Employee not found")
 
-@app.delete("/api/employees/{employee_id}", status_code=204)
+@app.delete("/employees/{employee_id}", status_code=204)
 def delete_employee(employee_id: str):
     container = get_container()
     try:
