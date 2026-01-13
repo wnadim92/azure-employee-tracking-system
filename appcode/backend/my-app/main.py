@@ -4,7 +4,7 @@ import logging
 import time
 from typing import List, Optional
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, APIRouter
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 
@@ -16,6 +16,7 @@ from azure.identity import DefaultAzureCredential
 from azure.core.exceptions import ResourceNotFoundError
 
 app = FastAPI()
+router = APIRouter()
 
 app.add_middleware(
     CORSMiddleware,
@@ -81,7 +82,7 @@ class Employee(BaseModel):
     class Config:
         populate_by_name = True
 
-@app.get("/employees", response_model=List[Employee])
+@router.get("/employees", response_model=List[Employee])
 def get_employees():
     container = get_container()
     employees = []
@@ -90,14 +91,14 @@ def get_employees():
         employees.append(Employee(**item))
     return employees
 
-@app.post("/employee")
+@router.post("/employee")
 def save_employee(emp: Employee) -> Employee:
     container = get_container()
     # upsert_item handles both Create and Update
     created_item = container.upsert_item(emp.model_dump(by_alias=True))
     return Employee(**created_item)
 
-@app.get("/employees/{employee_id}", response_model=Employee)
+@router.get("/employees/{employee_id}", response_model=Employee)
 def get_employee_by_id(employee_id: str):
     container = get_container()
     try:
@@ -108,7 +109,7 @@ def get_employee_by_id(employee_id: str):
     except ResourceNotFoundError:
         raise HTTPException(status_code=404, detail="Employee not found")
 
-@app.delete("/employees/{employee_id}", status_code=204)
+@router.delete("/employees/{employee_id}", status_code=204)
 def delete_employee(employee_id: str):
     container = get_container()
     try:
@@ -121,3 +122,8 @@ def delete_employee(employee_id: str):
             pass
         else:
             raise
+
+# Mount routes at root (for Azure Functions which adds /api prefix)
+app.include_router(router)
+# Mount routes at /api (for Local Docker Compose which has no prefix)
+app.include_router(router, prefix="/api")
