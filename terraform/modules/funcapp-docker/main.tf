@@ -63,16 +63,31 @@ resource "azurerm_linux_function_app" "this" {
   }
 }
 
+# function app private endpoint
+module "pe" {
+  count = var.public_network_access_enabled == true ? 1 : 0
+
+  source                         = "../pe"
+  resource_name                  = "${var.funcapp_name}-sites"
+  rg_name                        = var.rg_name
+  region                         = var.region
+  subnet_id                      = var.pe_subnet_id
+  private_connection_resource_id = azurerm_linux_function_app.this.id
+  pe_subresource_type            = "sites"
+  private_dns_zone_id            = var.sites_dns_zone_id
+}
+
 # 1. The Storage Module (Infrastructure for the Function)
 module "storage" {
-  source            = "../storage"
-  strg_name         = lower(substr(replace(var.funcapp_name, "-", ""), 0, 24))
-  rg_name           = var.rg_name
-  region            = var.region
-  subnet_id         = var.pe_subnet_id
-  principal_id      = var.uami_principal_id
-  blob_dns_zone_id  = var.blob_dns_zone_id
-  file_dns_zone_id  = var.file_dns_zone_id
-  table_dns_zone_id = var.table_dns_zone_id
-  queue_dns_zone_id = var.queue_dns_zone_id
+  source                        = "../storage"
+  strg_name                     = lower(substr(replace(var.funcapp_name, "-", ""), 0, 24))
+  rg_name                       = var.rg_name
+  region                        = var.region
+  subnet_id                     = var.pe_subnet_id
+  principal_id                  = var.uami_principal_id
+  blob_dns_zone_id              = var.blob_dns_zone_id
+  file_dns_zone_id              = var.file_dns_zone_id
+  table_dns_zone_id             = var.table_dns_zone_id
+  queue_dns_zone_id             = var.queue_dns_zone_id
+  public_network_access_enabled = var.public_network_access_enabled
 }

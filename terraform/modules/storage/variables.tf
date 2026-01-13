@@ -41,3 +41,8 @@ variable "principal_id" {
   type        = string
   description = "The id of the user assigned managed identity's princpal."
 }
+
+variable "public_network_access_enabled" {
+  type        = bool
+  default     = false
+}
