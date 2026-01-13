@@ -21,6 +21,7 @@ resource "azurerm_linux_web_app" "this" {
 
   app_settings = {
     "REACT_APP_API_URL" = var.backend_url
+    "REACT_APP_API_BASE_URL" = var.backend_url
   }
 
   site_config {
