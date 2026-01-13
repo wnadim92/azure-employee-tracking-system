@@ -10,7 +10,7 @@ output "app_primary_region_vnet_name" {
 
 output "app_primary_region_vnet_address_spaces" {
   value       = module.app_primary_region.vnet_address_spaces
-  description = "The address spacse assigned to the Virtual Network."
+  description = "The address spaces assigned to the Virtual Network."
 }
 
 output "app_primary_region_rg_id" {
