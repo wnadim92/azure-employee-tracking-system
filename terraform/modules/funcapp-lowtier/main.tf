@@ -10,8 +10,7 @@ resource "azurerm_service_plan" "this" {
 resource "azurerm_linux_function_app" "this" {
   name                = var.funcapp_name
   resource_group_name = var.rg_name
-  location            = var.region
-
+  location          
   service_plan_id      = azurerm_service_plan.this.id
   storage_account_name = module.storage.storage_account_name
 
