@@ -20,12 +20,12 @@ resource "azurerm_linux_web_app" "this" {
   }
 
   app_settings = {
-    "REACT_APP_API_URL" = var.backend_url
+    "REACT_APP_API_URL"      = var.backend_url
     "REACT_APP_API_BASE_URL" = var.backend_url
   }
 
   site_config {
-    always_on              = false
+    always_on = false
     application_stack {
       docker_image_name = "${var.docker_registry_url}/${var.image_name}:${var.image_tag}"
     }

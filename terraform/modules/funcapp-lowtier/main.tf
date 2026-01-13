@@ -30,10 +30,11 @@ resource "azurerm_linux_function_app" "this" {
   }
 
   app_settings = {
-    "AzureWebJobsStorage"                      = module.storage.primary_connection_string
-    "WEBSITE_DNS_SERVER"                       = "168.63.129.16"
-    "DOCKER_REGISTRY_SERVER_URL"               = "https://index.docker.io"
-    "WEBSITE_SKIP_CONTENT_SHARE_VALIDATION"    = "1"
+    "AzureWebJobsStorage"                                = module.storage.primary_connection_string
+    "WEBSITE_DNS_SERVER"                                 = "168.63.129.16"
+    "DOCKER_REGISTRY_SERVER_URL"                         = "https://index.docker.io"
+    "WEBSITE_SKIP_CONTENT_SHARE_VALIDATION"              = "1"
+    "AzureFunctionsJobHost__Logging__Console__IsEnabled" = "true"
 
     "CosmosDbConnection__accountEndpoint" = var.cosmosdb_endpoint
     "CosmosDbConnection__credential"      = "managedidentity"

@@ -30,7 +30,8 @@ services:
       - COSMOS_DB_KEY=C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==
       - AzureWebJobsScriptRoot=/home/site/wwwroot
       - AzureFunctionsJobHost__Logging__Console__IsEnabled=true
-      - AzureWebJobsStorage=UseDevelopmentStorage=true
+      - AzureWebJobsStorage=""
+      - FUNCTIONS_WORKER_RUNTIME=python
       - AzureFunctionsJobHost__CORS__AllowedOrigins=*
       - AzureFunctionsJobHost__CORS__SupportCredentials=true
     depends_on:
@@ -40,10 +41,10 @@ services:
     volumes:
       - ./backend/my-app:/home/site/wwwroot
     healthcheck:
-      test: ["CMD", "python", "-c", "import urllib.request; print(urllib.request.urlopen('http://127.0.0.1:80/api/health').getcode())"]
+      test: ["CMD", "python", "-c", "import urllib.request, sys; try: urllib.request.urlopen('http://127.0.0.1:80/api/health'); sys.exit(0); except Exception: sys.exit(1)"]
       interval: 10s
-      timeout: 5s
-      retries: 5
+      timeout: 10s
+      retries: 20
 
   frontend:
     build:
