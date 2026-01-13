@@ -8,13 +8,6 @@ from fastapi import FastAPI, HTTPException, APIRouter
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 
-# 2026 Azure SDKs
-from azure.cosmos import CosmosClient
-from azure.cosmos import PartitionKey
-from azure.cosmos.exceptions import CosmosHttpResponseError
-from azure.identity import DefaultAzureCredential
-from azure.core.exceptions import ResourceNotFoundError
-
 app = FastAPI()
 router = APIRouter()
 
@@ -32,6 +25,10 @@ def get_container():
     global _container
     if _container:
         return _container
+
+    # Lazy imports to prevent startup crashes if dependencies are missing
+    from azure.cosmos import CosmosClient, PartitionKey
+    from azure.identity import DefaultAzureCredential
 
     # These are set by your Terraform in Azure or docker-compose locally
     endpoint = os.getenv("COSMOS_DB_ENDPOINT")
@@ -101,6 +98,7 @@ def save_employee(emp: Employee) -> Employee:
 @router.get("/employees/{employee_id}", response_model=Employee)
 def get_employee_by_id(employee_id: str):
     container = get_container()
+    from azure.core.exceptions import ResourceNotFoundError
     try:
         # Use read_item for efficient point reads.
         # This assumes the container's partition key is '/id'.
@@ -112,6 +110,7 @@ def get_employee_by_id(employee_id: str):
 @router.delete("/employees/{employee_id}", status_code=204)
 def delete_employee(employee_id: str):
     container = get_container()
+    from azure.cosmos.exceptions import CosmosHttpResponseError
     try:
         # To delete, you need the item's id and its partition key.
         # This assumes the container's partition key is '/id'.
