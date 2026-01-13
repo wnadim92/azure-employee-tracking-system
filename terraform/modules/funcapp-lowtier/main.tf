@@ -1,3 +1,9 @@
+resource "azurerm_storage_share" "content" {
+  name                 = "${lower(substr(replace(var.funcapp_name, "-", ""), 0, 20))}-content"
+  storage_account_name = module.storage.storage_account_name
+  quota                = 50
+}
+
 resource "azurerm_service_plan" "this" {
   name                = "${var.funcapp_name}-plan"
   resource_group_name = var.rg_name
@@ -59,6 +65,8 @@ resource "azurerm_linux_function_app" "this" {
     #   }
     # }
   }
+
+  depends_on = [azurerm_storage_share.content]
 }
 
 # 1. The Storage Module (Infrastructure for the Function)
