@@ -43,7 +43,7 @@ services:
     build:
       context: ./frontend/my-app  # Looks for Dockerfile inside frontend folder
       args:
-        - REACT_APP_API_BASE_URL=http://localhost:7071/api      
+        - REACT_APP_API_URL=http://localhost:7071/api
     container_name: react_frontend
     ports:
       - "3000:80"
