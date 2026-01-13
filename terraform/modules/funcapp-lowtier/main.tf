@@ -30,6 +30,7 @@ resource "azurerm_linux_function_app" "this" {
     "AzureFunctionsJobHost__Logging__Console__IsEnabled" = "true"
     "FUNCTIONS_WORKER_RUNTIME"                           = "python"
     "WEBSITE_CONTENTOVERVNET"                            = "1"
+    "WEBSITES_PORT"                                      = "80"
 
     "CosmosDbConnection__accountEndpoint" = var.cosmosdb_endpoint
     "CosmosDbConnection__credential"      = "managedidentity"
