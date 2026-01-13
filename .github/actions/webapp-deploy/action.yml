@@ -30,13 +30,18 @@ inputs:
     default: '.'
   DEPLOY_TARGET_NAME:
     description: 'Name of the specific App Service/Function to deploy code to'
-    required: true
+    required: false
+  TARGET_RESOURCE_TYPE:
+    description: 'If DEPLOY_TARGET_NAME is empty, use terraform output: "web" or "function"'
+    required: false
+    default: 'function'
 
 runs:
   using: "composite"
   steps:
     - name: Run Terraform Deploy
       uses: ./.github/actions/terraform-deploy
+      id: tf_deploy
       with:
         TARGET_ENVIRONMENT: ${{ inputs.TARGET_ENVIRONMENT }}
         CHECKOUT_PATH: ${{ inputs.CHECKOUT_PATH }}
@@ -46,9 +51,21 @@ runs:
         FUNCAPP_NAME: ${{ inputs.FUNCAPP_NAME }}
         WEBAPP_NAME: ${{ inputs.WEBAPP_NAME }}
 
+    - name: Determine Target App Name
+      id: target
+      shell: bash
+      run: |
+        if [ -n "${{ inputs.DEPLOY_TARGET_NAME }}" ]; then
+          echo "name=${{ inputs.DEPLOY_TARGET_NAME }}" >> $GITHUB_OUTPUT
+        elif [ "${{ inputs.TARGET_RESOURCE_TYPE }}" == "web" ]; then
+          echo "name=${{ steps.tf_deploy.outputs.webapp_name }}" >> $GITHUB_OUTPUT
+        else
+          echo "name=${{ steps.tf_deploy.outputs.funcapp_name }}" >> $GITHUB_OUTPUT
+        fi
+
     - name: Deploy Code to Web/Function App
       if: inputs.DESTROY != 'true'
       uses: azure/webapps-deploy@v2
       with:
-        app-name: ${{ inputs.DEPLOY_TARGET_NAME }}
+        app-name: ${{ steps.target.outputs.name }}
         package: ${{ inputs.PACKAGE_PATH }}

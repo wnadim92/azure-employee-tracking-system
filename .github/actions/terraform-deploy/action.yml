@@ -29,6 +29,14 @@ inputs:
     description: 'Name of the Web App'
     required: false
 
+outputs:
+  webapp_name:
+    description: "The name of the webapp from terraform output"
+    value: ${{ steps.tf_outputs.outputs.webapp_name }}
+  funcapp_name:
+    description: "The name of the funcapp from terraform output"
+    value: ${{ steps.tf_outputs.outputs.funcapp_name }}
+
 runs:
   using: "composite"
   steps:
@@ -73,3 +81,11 @@ runs:
 
         echo "Running terraform apply (or destroy)..."
         terraform apply -auto-approve tfplan
+
+    - name: Get Terraform Outputs
+      id: tf_outputs
+      shell: bash
+      working-directory: ${{ inputs.CHECKOUT_PATH }}/${{ inputs.WORKING_DIRECTORY }}
+      run: |
+        echo "webapp_name=$(terraform output -raw webapp_name 2>/dev/null || echo '')" >> $GITHUB_OUTPUT
+        echo "funcapp_name=$(terraform output -raw funcapp_name 2>/dev/null || echo '')" >> $GITHUB_OUTPUT
