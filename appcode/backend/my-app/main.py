@@ -11,6 +11,10 @@ from pydantic import BaseModel, Field
 app = FastAPI()
 router = APIRouter()
 
+@app.get("/")
+def root():
+    return {"message": "FastAPI on Azure Functions is running!"}
+
 @router.get("/health")
 def health_check():
     return {"status": "ok", "environment": "Azure Functions"}
@@ -34,7 +38,7 @@ def get_container():
     from azure.cosmos import CosmosClient, PartitionKey
     from azure.identity import DefaultAzureCredential
 
-    # These are set by your Terraform in Azure or docker-compose locally
+    # These are set by Terraform in Azure or docker-compose locally
     endpoint = os.getenv("COSMOS_DB_ENDPOINT")
     db_name = os.getenv("DB_DATABASE_NAME", "EmployeeDB")
     
@@ -56,7 +60,7 @@ def get_container():
     last_error = None
     for i in range(40):
         try:
-            # Create Database and Container if they don't exist
+            # Provision Database and Container if they don't exist
             database = client.create_database_if_not_exists(id=db_name)
             _container = database.create_container_if_not_exists(
                 id="employees", 
@@ -116,7 +120,7 @@ def delete_employee(employee_id: str):
     container = get_container()
     from azure.cosmos.exceptions import CosmosHttpResponseError
     try:
-        # To delete, you need the item's id and its partition key.
+        # To delete, need the item's id and its partition key.
         # This assumes the container's partition key is '/id'.
         container.delete_item(item=employee_id, partition_key=employee_id)
     except CosmosHttpResponseError as e:
