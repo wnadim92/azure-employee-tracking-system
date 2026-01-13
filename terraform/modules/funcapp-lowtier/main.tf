@@ -32,7 +32,8 @@ resource "azurerm_linux_function_app" "this" {
     "CosmosDbConnection__clientId"        = var.uami_client_id
 
     "AZURE_CLIENT_ID" = var.uami_client_id
-    # "WEBSITE_CONTENTOVERVNET"       = "1" # Not supported in Y1
+    "WEBSITE_CONTENTOVERVNET"             = "1"
+    "WEBSITE_SKIP_CONTENT_SHARE_VALIDATION" = "1"
     # WEBSITE_VNET_ROUTE_ALL is now handled in site_config
     "SCM_DO_BUILD_DURING_DEPLOYMENT" = "true"
     "ENABLE_ORYX_BUILD"              = "true"
