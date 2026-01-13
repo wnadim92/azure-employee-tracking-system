@@ -91,7 +91,7 @@ jobs:
           DESTROY: ${{ github.event.inputs.destroy }}
           FUNCAPP_NAME: "emptrack-api-${{ env.ENV }}"
           WEBAPP_NAME: "emptrack-web-${{ env.ENV }}"
-          DEPLOY_TARGET_NAME: "emptrack-api-${{ env.ENV }}"
+          TARGET_RESOURCE_TYPE: 'function'
           PACKAGE_PATH: 'appcode/backend/my-app'
         env:
           ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
@@ -99,8 +99,12 @@ jobs:
           TF_VAR_secondary_region: ${{ env.SECONDARY_REGION }}
 
       - name: Deploy Frontend (Code Only)
-        uses: azure/webapps-deploy@v2
+        uses: ./.github/actions/webapp-deploy
         if: github.event.inputs.destroy != 'true'
         with:
-          app-name: "emptrack-web-${{ env.ENV }}"
-          package: 'appcode/frontend/my-app'
+          TARGET_ENVIRONMENT: '${{ env.ENV }}'
+          CHECKOUT_PATH: .
+          WORKING_DIRECTORY: 'terraform/src'
+          REGION: ${{ env.PRIMARY_REGION }}
+          TARGET_RESOURCE_TYPE: 'web'
+          PACKAGE_PATH: 'appcode/frontend/my-app'

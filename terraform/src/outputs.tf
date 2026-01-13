@@ -22,3 +22,13 @@ output "app_primary_region_rg_name" {
   description = "The name of the resource group."
   value       = module.app_primary_region.rg_name
 }
+
+output "webapp_name" {
+  description = "The name of the web app."
+  value       = module.app_primary_region.webapp_name
+}
+
+output "funcapp_name" {
+  description = "The name of the function app."
+  value       = module.app_primary_region.funcapp_name
+}
