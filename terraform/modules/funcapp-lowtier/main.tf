@@ -19,7 +19,6 @@ resource "azurerm_linux_function_app" "this" {
 
   service_plan_id      = azurerm_service_plan.this.id
   storage_account_name = module.storage.storage_account_name
-  storage_account_access_key = module.storage.primary_access_key
 
   storage_uses_managed_identity = false
   virtual_network_subnet_id     = var.vnet_integration_subnet_id
@@ -32,6 +31,8 @@ resource "azurerm_linux_function_app" "this" {
   app_settings = {
     "AzureWebJobsStorage"                      = module.storage.primary_connection_string
     "WEBSITE_DNS_SERVER"                       = "168.63.129.16"
+    "DOCKER_REGISTRY_SERVER_URL"               = "https://index.docker.io"
+    "WEBSITE_SKIP_CONTENT_SHARE_VALIDATION"    = "1"
 
     "CosmosDbConnection__accountEndpoint" = var.cosmosdb_endpoint
     "CosmosDbConnection__credential"      = "managedidentity"
