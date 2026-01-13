@@ -8,7 +8,7 @@ module "emp_track_frontend_appsvc" {
   docker_registry_url = var.docker_registry_url
   image_name          = var.frontend_image_name
   image_tag           = var.image_tag
-  backend_url         = "https://${module.emp_track_middle_funcapp.name}.azurewebsites.net/api"
+  backend_url         = "https://${var.project_name}-${var.environment}-${var.region}-funcapp.azurewebsites.net/api"
 }
 
 module "emp_track_middle_funcapp" {
@@ -26,7 +26,7 @@ module "emp_track_middle_funcapp" {
   image_name                 = var.backend_image_name
   image_tag                  = var.image_tag
   database_name              = "${var.project_name}-${var.environment}-${var.region}-db"
-  allowed_origins            = ["https://${module.emp_track_frontend_appsvc.name}.azurewebsites.net"]
+  allowed_origins            = ["https://${var.project_name}-${var.environment}-${var.region}-appsvc.azurewebsites.net"]
   blob_dns_zone_id           = azurerm_private_dns_zone.blob.id
   file_dns_zone_id           = azurerm_private_dns_zone.file.id
   table_dns_zone_id          = azurerm_private_dns_zone.table.id
