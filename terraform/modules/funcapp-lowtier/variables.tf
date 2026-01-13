@@ -64,3 +64,5 @@ variable "table_dns_zone_id" {
 variable "queue_dns_zone_id" {
   type = string
 }
+
+variable "image_tag" {}
