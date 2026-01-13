@@ -29,6 +29,8 @@ resource "azurerm_linux_function_app" "this" {
     "WEBSITE_CONTENTOVERVNET"                  = "1"
     "WEBSITE_DNS_SERVER"                       = "168.63.129.16"
     "WEBSITE_SKIP_CONTENT_SHARE_VALIDATION"    = "1"
+    "WEBSITE_CONTENTSHARE"                     = "${lower(substr(replace(var.funcapp_name, "-", ""), 0, 20))}-content"
+    "WEBSITE_RUN_FROM_PACKAGE"                 = "1"
 
     "CosmosDbConnection__accountEndpoint" = var.cosmosdb_endpoint
     "CosmosDbConnection__credential"      = "managedidentity"
