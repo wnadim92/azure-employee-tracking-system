@@ -80,3 +80,4 @@ module "storage" {
   table_dns_zone_id = var.table_dns_zone_id
   queue_dns_zone_id = var.queue_dns_zone_id
 }
+
