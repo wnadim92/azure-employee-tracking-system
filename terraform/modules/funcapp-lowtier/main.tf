@@ -9,7 +9,7 @@ resource "azurerm_service_plan" "this" {
   resource_group_name = var.rg_name
   location            = var.region
   os_type             = "Linux"
-  sku_name            = "Y1"
+  sku_name            = "B1"
 }
 
 resource "azurerm_linux_function_app" "this" {
@@ -31,12 +31,7 @@ resource "azurerm_linux_function_app" "this" {
 
   app_settings = {
     "AzureWebJobsStorage"                      = module.storage.primary_connection_string
-    "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING" = module.storage.primary_connection_string
-    "WEBSITE_CONTENTOVERVNET"                  = "1"
     "WEBSITE_DNS_SERVER"                       = "168.63.129.16"
-    "WEBSITE_SKIP_CONTENT_SHARE_VALIDATION"    = "1"
-    "WEBSITE_CONTENTSHARE"                     = "${lower(substr(replace(var.funcapp_name, "-", ""), 0, 20))}-content"
-    "WEBSITE_RUN_FROM_PACKAGE"                 = "1"
 
     "CosmosDbConnection__accountEndpoint" = var.cosmosdb_endpoint
     "CosmosDbConnection__credential"      = "managedidentity"
@@ -51,22 +46,14 @@ resource "azurerm_linux_function_app" "this" {
   site_config {
     vnet_route_all_enabled = true
 
-    # IF NOT USING DOCKER (Python):
     application_stack {
-      python_version = "3.11"
+      docker {
+        registry_url = var.docker_registry_url
+        image_name   = var.image_name
+        image_tag    = "latest"
+      }
     }
-
-    # IF USING DOCKER:
-    # application_stack {
-    #   docker {
-    #     registry_url = var.docker_registry_url
-    #     image_name   = var.image_name
-    #     image_tag    = "latest"
-    #   }
-    # }
   }
-
-  depends_on = [azurerm_storage_share.content]
 }
 
 # 1. The Storage Module (Infrastructure for the Function)
