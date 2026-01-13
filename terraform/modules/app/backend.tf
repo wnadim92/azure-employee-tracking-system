@@ -30,39 +30,3 @@ module "emp_track_db_pe_snet" {
   vnet_name   = module.vnet.vnet_name
   region      = var.region
 }
-
-# module "emp_track_managed_identity" {
-#   source                               = "../../modules/managed_identity"
-#   rg_name                              = module.rg.rg_name
-#   region                               = var.region
-#   principal_name                       = "${var.project_name}-${var.environment}-${var.region}-sa"
-# }
-
-# module "emp_track_middle_funcapp" {
-#   source                               = "../../modules/funcapp"
-#   funcapp_name                         = "${var.project_name}-${var.environment}-${var.region}-funcapp"
-#   pe_subnet_id                         = modules.emp_track_middletier_pe_snet.subnet_id
-#   vnet_integration_subnet_id           = moddule.emp_track_middletier_vnetintegration_snet.subnet_id
-#   uami_resource_id                     = module.emp_track_managed_identity.uami_id
-#   uami_client_id                       = module.emp_track_managed_identity.client_id
-#   uami_principal_id                    = module.emp_track_managed_identity.principal_id
-#   rg_name                              = module.rg.rg_name
-#   region                               = var.region
-#   cosmosdb_endpoint                    = module.emp_track_db.cosmosdb_endpoint
-#   docker_registry_url                  = var.docker_registry_url
-#   image_name                           = var.backend_image_name
-#   blob_dns_zone_id                     = azurerm_private_dns_zone.blob.name
-#   file_dns_zone_id                     = azurerm_private_dns_zone.file.name
-#   table_dns_zone_id                    = azurerm_private_dns_zone.table.name
-#   queue_dns_zone_id                    = azurerm_private_dns_zone.queue.name
-# }
-
-# module "emp_track_db" {
-#   source                               = "../../modules/cosmosdb"
-#   subnet_id                            = modules.emp_track_db_pe_snet.subnet_id
-#   db_name                              = "${var.project_name}-${var.environment}-${var.region}-db"
-#   rg_name                              = module.rg.rg_name
-#   region                               = var.region
-#   private_dns_zone_id                  = azurerm_private_dns_zone.cosmos.name
-#   backend_principal_id                 = module.emp_track_managed_identity.principal_id
-# }

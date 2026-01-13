@@ -1,5 +1,4 @@
 
-#front end app service React SPA
 
 module "emp_track_frontend_vnetintegration_snet" {
   source             = "../../modules/subnet"

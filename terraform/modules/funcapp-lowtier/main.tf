@@ -1,4 +1,3 @@
-variable "image_tag" {}
 
 resource "azurerm_storage_share" "content" {
   name                 = "${lower(substr(replace(var.funcapp_name, "-", ""), 0, 20))}-content"
