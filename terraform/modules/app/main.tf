@@ -8,7 +8,7 @@ module "emp_track_frontend_appsvc" {
   docker_registry_url = var.docker_registry_url
   image_name          = var.frontend_image_name
   image_tag           = var.image_tag
-  backend_url         = "https://${var.project_name}-${var.environment}-${var.region}-funcapp.azurewebsites.net/api"
+  backend_url         = "https://${var.project_name}-${var.environment}-${var.region}-funcapp.azurewebsites.net"
 }
 
 module "emp_track_middle_funcapp" {
