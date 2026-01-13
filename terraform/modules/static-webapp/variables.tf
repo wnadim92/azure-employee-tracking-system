@@ -26,3 +26,5 @@ variable "region" {
 variable "uami_resource_id" {
   type = string
 }
+
+variable "image_tag" {}

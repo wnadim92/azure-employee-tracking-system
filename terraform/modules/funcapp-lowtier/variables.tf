@@ -33,10 +33,7 @@ variable "pe_subnet_id" {
   description = "The subnet id to attach the pe to."
 }
 
-# variable "sites_dns_zone_id" {
-#   type        = string
-#   description = "The dns zone id to attach the pe to."
-# }
+variable "image_tag" {}
 
 variable "cosmosdb_endpoint" {
   type = string

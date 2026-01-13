@@ -1,4 +1,6 @@
 
+variable "image_tag" {}
+
 resource "azurerm_service_plan" "this" {
   name                = "${var.app_svc_name}-plan"
   resource_group_name = var.rg_name
