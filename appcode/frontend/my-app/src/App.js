@@ -163,7 +163,7 @@ function App() {
                   <div className="employee-info">
                     <strong>{emp.name}</strong> <span>({emp.role})</span>
                     <br/>
-                    <small>Manager: {emp.manager || 'N/A'} | Hired: {emp.hireDate} | DOB: {emp.dob}</small>
+                    <small>Manager: {emp.manager || 'N/A'} | Hired: {emp.hireDate} | DOB: {emp.dob} | Address: {emp.address}</small>
                   </div>
                   <div className="item-actions">
                     <button onClick={() => handleEdit(emp)} className="edit-btn">Edit</button>
