@@ -40,7 +40,7 @@ services:
     volumes:
       - ./backend/my-app:/home/site/wwwroot
     healthcheck:
-      test: ["CMD", "python", "-c", "import urllib.request; print(urllib.request.urlopen('http://localhost:80/api/health').getcode())"]
+      test: ["CMD", "python", "-c", "import urllib.request; print(urllib.request.urlopen('http://127.0.0.1:80/api/health').getcode())"]
       interval: 10s
       timeout: 5s
       retries: 5

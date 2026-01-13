@@ -48,7 +48,7 @@ function App() {
     try {
       const payload = { ...formData };
       // Remove id if it's null/empty so backend generates a new one for creates
-      if (!payload.id) {
+      if (!payload.id || payload.id === "") {
         delete payload.id;
       }
 
