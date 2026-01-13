@@ -15,6 +15,7 @@ resource "azurerm_linux_function_app" "this" {
   storage_account_name = module.storage.storage_account_name
 
   storage_uses_managed_identity = true
+  virtual_network_subnet_id     = var.vnet_integration_subnet_id
 
   identity {
     type         = "UserAssigned"
@@ -38,7 +39,7 @@ resource "azurerm_linux_function_app" "this" {
   }
 
   site_config {
-    vnet_route_all_enabled = false
+    vnet_route_all_enabled = true
 
     # IF NOT USING DOCKER (Python):
     application_stack {
