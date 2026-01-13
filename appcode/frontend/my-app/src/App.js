@@ -161,7 +161,7 @@ function App() {
               {employees.map(emp => (
                 <li key={emp.id} className="employee-item">
                   <div className="employee-info">
-                    <strong>{emp.name}</strong> <span>({emp.role})</span>
+                    <strong>{emp.name}</strong> <small>(ID: {emp.id})</small> <span>({emp.role})</span>
                     <br/>
                     <small>Manager: {emp.manager || 'N/A'} | Hired: {emp.hireDate} | DOB: {emp.dob} | Address: {emp.address}</small>
                   </div>
