@@ -56,3 +56,5 @@ runs:
         push: true
         tags: ${{ inputs.REGISTRY_USERNAME }}/${{ inputs.IMAGE_NAME }}:${{ inputs.IMAGE_TAG }}
         build-args: ${{ inputs.BUILD_ARGS }}
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
