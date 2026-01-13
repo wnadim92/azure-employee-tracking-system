@@ -13,8 +13,9 @@ resource "azurerm_linux_function_app" "this" {
 
   service_plan_id      = azurerm_service_plan.this.id
   storage_account_name = module.storage.storage_account_name
+  storage_account_access_key = module.storage.primary_access_key
 
-  storage_uses_managed_identity = true
+  storage_uses_managed_identity = false
   virtual_network_subnet_id     = var.vnet_integration_subnet_id
 
   identity {
@@ -23,17 +24,17 @@ resource "azurerm_linux_function_app" "this" {
   }
 
   app_settings = {
-    "AzureWebJobsStorage__accountName" = module.storage.storage_account_name
-    "AzureWebJobsStorage__credential"  = "managedidentity"
-    "AzureWebJobsStorage__clientId"    = var.uami_client_id
+    "AzureWebJobsStorage"                      = module.storage.primary_connection_string
+    "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING" = module.storage.primary_connection_string
+    "WEBSITE_CONTENTOVERVNET"                  = "1"
+    "WEBSITE_DNS_SERVER"                       = "168.63.129.16"
+    "WEBSITE_SKIP_CONTENT_SHARE_VALIDATION"    = "1"
 
     "CosmosDbConnection__accountEndpoint" = var.cosmosdb_endpoint
     "CosmosDbConnection__credential"      = "managedidentity"
     "CosmosDbConnection__clientId"        = var.uami_client_id
 
     "AZURE_CLIENT_ID" = var.uami_client_id
-    "WEBSITE_CONTENTOVERVNET"             = "1"
-    "WEBSITE_SKIP_CONTENT_SHARE_VALIDATION" = "1"
     # WEBSITE_VNET_ROUTE_ALL is now handled in site_config
     "SCM_DO_BUILD_DURING_DEPLOYMENT" = "true"
     "ENABLE_ORYX_BUILD"              = "true"
