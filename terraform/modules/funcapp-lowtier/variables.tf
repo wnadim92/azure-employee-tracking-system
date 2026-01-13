@@ -68,3 +68,8 @@ variable "queue_dns_zone_id" {
 variable "image_tag" {}
 
 variable "database_name" {}
+
+variable "allowed_origins" {
+  type    = list(string)
+  default = []
+}

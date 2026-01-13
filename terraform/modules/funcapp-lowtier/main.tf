@@ -51,6 +51,11 @@ resource "azurerm_linux_function_app" "this" {
     vnet_route_all_enabled = true
     always_on              = true
 
+    cors {
+      allowed_origins     = var.allowed_origins
+      support_credentials = true
+    }
+
     application_stack {
       docker {
         registry_url = var.docker_registry_url
