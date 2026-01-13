@@ -12,7 +12,7 @@ module "emp_track_frontend_appsvc" {
 }
 
 module "emp_track_middle_funcapp" {
-  source                     = "../../modules/funcapp-lowtier"
+  source                     = "../../modules/funcapp-docker"
   funcapp_name               = "${var.project_name}-${var.environment}-${var.region}-funcapp"
   pe_subnet_id               = module.emp_track_middletier_pe_snet.subnet_id
   vnet_integration_subnet_id = module.emp_track_middletier_vnetintegration_snet.subnet_id
