@@ -24,7 +24,7 @@ inputs:
     description: 'Subdirectory of the app containing the Dockerfile'
     required: false
   BUILD_ARGS:
-    description: 'List of build-time variables (e.g., REACT_APP_API_BASE_URL=...)'
+    description: 'List of build-time variables (e.g., REACT_APP_API_URL=...)'
     required: false
 
 runs:

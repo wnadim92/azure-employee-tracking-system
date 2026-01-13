@@ -15,8 +15,8 @@ RUN npm install
 COPY . .
 
 # Accept the build argument and set it as an environment variable
-ARG REACT_APP_API_BASE_URL
-ENV REACT_APP_API_BASE_URL=$REACT_APP_API_BASE_URL
+ARG REACT_APP_API_URL
+ENV REACT_APP_API_URL=$REACT_APP_API_URL
 
 # Build the production-ready application
 RUN npm run build
