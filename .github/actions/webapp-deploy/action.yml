@@ -31,6 +31,10 @@ inputs:
   IMAGES:
     description: 'Docker Image to deploy (e.g., myregistry.azurecr.io/myimage:latest)'
     required: false
+  IMAGE_TAG:
+    description: 'Tag for the Docker Image (for Terraform)'
+    required: false
+    default: 'latest'
   DEPLOY_TARGET_NAME:
     description: 'Name of the specific App Service/Function to deploy code to'
     required: false
@@ -53,6 +57,7 @@ runs:
         DESTROY: ${{ inputs.DESTROY }}
         FUNCAPP_NAME: ${{ inputs.FUNCAPP_NAME }}
         WEBAPP_NAME: ${{ inputs.WEBAPP_NAME }}
+        IMAGE_TAG: ${{ inputs.IMAGE_TAG }}
 
     - name: Determine Target App Name
       id: target
@@ -66,10 +71,22 @@ runs:
           echo "name=${{ steps.tf_deploy.outputs.funcapp_name }}" >> $GITHUB_OUTPUT
         fi
 
-    - name: Deploy Code to Web/Function App
-      if: inputs.DESTROY != 'true'
+    - name: Debug Deployment Inputs
+      shell: bash
+      run: |
+        echo "Deploying to: ${{ steps.target.outputs.name }}"
+        echo "Images Input: '${{ inputs.IMAGES }}'"
+
+    - name: Deploy Container to Web/Function App
+      if: inputs.DESTROY != 'true' && inputs.IMAGES != ''
       uses: azure/webapps-deploy@v2
       with:
         app-name: ${{ steps.target.outputs.name }}
-        package: ${{ inputs.IMAGES == '' && inputs.PACKAGE_PATH || '' }}
         images: ${{ inputs.IMAGES }}
+
+    - name: Deploy Code to Web/Function App
+      if: inputs.DESTROY != 'true' && inputs.IMAGES == ''
+      uses: azure/webapps-deploy@v2
+      with:
+        app-name: ${{ steps.target.outputs.name }}
+        package: ${{ inputs.PACKAGE_PATH }}

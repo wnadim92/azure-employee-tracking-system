@@ -22,7 +22,7 @@ resource "azurerm_linux_web_app" "this" {
   site_config {
     always_on              = false
     application_stack {
-      docker_image_name = "${var.docker_registry_url}/${var.image_name}:latest"
+      docker_image_name = "${var.docker_registry_url}/${var.image_name}:${var.image_tag}"
     }
   }
 }

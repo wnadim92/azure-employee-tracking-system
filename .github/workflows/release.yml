@@ -90,7 +90,8 @@ jobs:
           REGION: ${{ env.PRIMARY_REGION }}
           DESTROY: ${{ github.event.inputs.destroy }}
           TARGET_RESOURCE_TYPE: 'function'
-          IMAGES: '${{ secrets.REGISTRY_USERNAME }}/emptrack-backend:latest'
+          IMAGES: '${{ secrets.REGISTRY_USERNAME }}/emptrack-backend:${{ github.sha }}'
+          IMAGE_TAG: ${{ github.sha }}
         env:
           ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
           TF_VAR_shouldBeMultiRegion: ${{ github.event.inputs.multiregion }}
@@ -105,4 +106,5 @@ jobs:
           WORKING_DIRECTORY: 'terraform/src'
           REGION: ${{ env.PRIMARY_REGION }}
           TARGET_RESOURCE_TYPE: 'web'
-          IMAGES: '${{ secrets.REGISTRY_USERNAME }}/emptrack-frontend:latest'
+          IMAGES: '${{ secrets.REGISTRY_USERNAME }}/emptrack-frontend:${{ github.sha }}'
+          IMAGE_TAG: ${{ github.sha }}

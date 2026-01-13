@@ -28,6 +28,10 @@ inputs:
   WEBAPP_NAME:
     description: 'Name of the Web App'
     required: false
+  IMAGE_TAG:
+    description: 'Tag for the Docker Image'
+    required: false
+    default: 'latest'
 
 outputs:
   webapp_name:
@@ -51,6 +55,7 @@ runs:
       env:
         TF_VAR_funcapp_name: ${{ inputs.FUNCAPP_NAME }}
         TF_VAR_webapp_name: ${{ inputs.WEBAPP_NAME }}
+        TF_VAR_image_tag: ${{ inputs.IMAGE_TAG }}
       run: |
         # Use -reconfigure to ensure backend stays fresh
         terraform init -reconfigure -backend-config="${{ inputs.TARGET_ENVIRONMENT }}/terraform.tfbackend"
