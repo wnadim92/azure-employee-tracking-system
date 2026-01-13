@@ -4,7 +4,6 @@ variable "rg_name" {
   default     = "rg"
 }
 
-
 variable "app_svc_name" {
   type = string
 }
@@ -28,3 +27,5 @@ variable "uami_resource_id" {
 }
 
 variable "image_tag" {}
+
+variable "backend_url" {}

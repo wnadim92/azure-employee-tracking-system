@@ -19,6 +19,10 @@ resource "azurerm_linux_web_app" "this" {
     identity_ids = [var.uami_resource_id]
   }
 
+  app_settings = {
+    "REACT_APP_API_URL" = var.backend_url
+  }
+
   site_config {
     always_on              = false
     application_stack {
