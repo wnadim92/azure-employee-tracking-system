@@ -65,7 +65,7 @@ resource "azurerm_linux_function_app" "this" {
 
 # function app private endpoint
 module "pe" {
-  count = var.public_network_access_enabled == true ? 1 : 0
+  count = var.public_network_access_enabled == true ? 0 : 1
 
   source                         = "../pe"
   resource_name                  = "${var.funcapp_name}-sites"
