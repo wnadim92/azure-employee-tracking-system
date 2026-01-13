@@ -48,19 +48,15 @@ runs:
     - name: deploy terraform
       shell: bash
       working-directory: ${{ inputs.CHECKOUT_PATH }}/${{ inputs.WORKING_DIRECTORY }}
+      env:
+        TF_VAR_funcapp_name: ${{ inputs.FUNCAPP_NAME }}
+        TF_VAR_webapp_name: ${{ inputs.WEBAPP_NAME }}
       run: |
         # Use -reconfigure to ensure backend stays fresh
         terraform init -reconfigure -backend-config="${{ inputs.TARGET_ENVIRONMENT }}/terraform.tfbackend"
 
         # Construct var arguments (CLI -var overrides tfvars)
         VAR_ARGS="-var primary_region=${{ inputs.REGION }}"
-        
-        if [ -n "${{ inputs.FUNCAPP_NAME }}" ]; then
-          VAR_ARGS="$VAR_ARGS -var funcapp_name=${{ inputs.FUNCAPP_NAME }}"
-        fi
-        if [ -n "${{ inputs.WEBAPP_NAME }}" ]; then
-          VAR_ARGS="$VAR_ARGS -var webapp_name=${{ inputs.WEBAPP_NAME }}"
-        fi
 
         # Pass environment variables as -var to override tfvars
         if [ -n "$TF_VAR_secondary_region" ]; then
