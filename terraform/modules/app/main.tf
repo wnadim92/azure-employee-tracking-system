@@ -25,6 +25,7 @@ module "emp_track_middle_funcapp" {
   docker_registry_url        = var.docker_registry_url
   image_name                 = var.backend_image_name
   image_tag                  = var.image_tag
+  database_name              = "${var.project_name}-${var.environment}-${var.region}-db"
   blob_dns_zone_id           = azurerm_private_dns_zone.blob.id
   file_dns_zone_id           = azurerm_private_dns_zone.file.id
   table_dns_zone_id          = azurerm_private_dns_zone.table.id
