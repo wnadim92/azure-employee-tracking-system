@@ -35,6 +35,7 @@ resource "azurerm_linux_function_app" "this" {
     "DOCKER_REGISTRY_SERVER_URL"                         = "https://index.docker.io"
     "WEBSITE_SKIP_CONTENT_SHARE_VALIDATION"              = "1"
     "AzureFunctionsJobHost__Logging__Console__IsEnabled" = "true"
+    "FUNCTIONS_WORKER_RUNTIME"                           = "python"
 
     "CosmosDbConnection__accountEndpoint" = var.cosmosdb_endpoint
     "CosmosDbConnection__credential"      = "managedidentity"
@@ -49,6 +50,7 @@ resource "azurerm_linux_function_app" "this" {
   site_config {
     vnet_route_all_enabled = true
     always_on              = true
+    health_check_path      = "/api/health"
 
     cors {
       allowed_origins     = var.allowed_origins
