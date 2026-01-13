@@ -89,8 +89,6 @@ jobs:
           WORKING_DIRECTORY: 'terraform/src'
           REGION: ${{ env.PRIMARY_REGION }}
           DESTROY: ${{ github.event.inputs.destroy }}
-          FUNCAPP_NAME: "emptrack-api-${{ env.ENV }}"
-          WEBAPP_NAME: "emptrack-web-${{ env.ENV }}"
           TARGET_RESOURCE_TYPE: 'function'
           PACKAGE_PATH: 'appcode/backend/my-app'
         env:
