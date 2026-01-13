@@ -15,6 +15,7 @@ module "app_primary_region" {
   docker_registry_url                            = var.docker_registry_url
   frontend_image_name                            = var.frontend_image_name
   backend_image_name                             = var.backend_image_name
+  image_tag                                      = var.image_tag
 }
 
 module "app_secondary_region" {
@@ -34,4 +35,5 @@ module "app_secondary_region" {
   docker_registry_url                            = var.docker_registry_url
   frontend_image_name                            = var.frontend_image_name
   backend_image_name                             = var.backend_image_name
+  image_tag                                      = var.image_tag
 }

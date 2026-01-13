@@ -44,7 +44,7 @@ resource "azurerm_linux_function_app" "this" {
       docker {
         registry_url = var.docker_registry_url
         image_name   = var.image_name
-        image_tag    = "latest"
+        image_tag    = var.image_tag
       }
     }
 
