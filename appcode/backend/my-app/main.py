@@ -11,7 +11,7 @@ from pydantic import BaseModel, Field
 app = FastAPI()
 router = APIRouter()
 
-@app.get("/health")
+@router.get("/health")
 def health_check():
     return {"status": "ok", "environment": "Azure Functions"}
 
