@@ -68,7 +68,7 @@ jobs:
           IMAGE_NAME: "emptrack-frontend"
           PROJECT_PATH: 'appcode/frontend/my-app'    
           IMAGE_TAG: ${{ github.sha }}
-          BUILD_ARGS: "REACT_APP_API_URL=https://emptrack-${{ env.ENV }}-${{ env.PRIMARY_REGION }}-funcapp.azurewebsites.net/api"
+          BUILD_ARGS: "REACT_APP_API_URL=https://emptrack-${{ env.ENV }}-${{ env.PRIMARY_REGION }}-funcapp.azurewebsites.net"
 
   provision-infra:
     needs: [build-images]
