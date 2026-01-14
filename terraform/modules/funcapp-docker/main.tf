@@ -1,20 +1,20 @@
-
 resource "azurerm_service_plan" "this" {
   name                = "${var.funcapp_name}-plan"
   resource_group_name = var.rg_name
   location            = var.region
   os_type             = "Linux"
-  sku_name            = "B1"
+  sku_name            = "S1"
 }
 
 resource "azurerm_linux_function_app" "this" {
   name                = var.funcapp_name
   resource_group_name = var.rg_name
   location            = var.region
+
   service_plan_id      = azurerm_service_plan.this.id
   storage_account_name = module.storage.storage_account_name
 
-  storage_uses_managed_identity = false
+  storage_uses_managed_identity = true
   virtual_network_subnet_id     = var.vnet_integration_subnet_id
 
   identity {
@@ -23,49 +23,48 @@ resource "azurerm_linux_function_app" "this" {
   }
 
   app_settings = {
-    "AzureWebJobsStorage"                                = module.storage.primary_connection_string
-    "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING"           = module.storage.primary_connection_string
-    "WEBSITE_CONTENTSHARE"                               = azurerm_storage_share.this.name
-    "WEBSITE_DNS_SERVER"                       = "168.63.129.16"
-    "WEBSITE_SKIP_CONTENT_SHARE_VALIDATION"    = "1"
-    "AzureFunctionsJobHost__Logging__Console__IsEnabled" = "true"
-    "FUNCTIONS_WORKER_RUNTIME"                           = "python"
+    "AzureWebJobsStorage__accountName" = module.storage.storage_account_name
+    "AzureWebJobsStorage__credential"  = "managedidentity"
+    "AzureWebJobsStorage__clientId"    = var.uami_client_id
 
     "CosmosDbConnection__accountEndpoint" = var.cosmosdb_endpoint
     "CosmosDbConnection__credential"      = "managedidentity"
     "CosmosDbConnection__clientId"        = var.uami_client_id
-    "COSMOS_DB_ENDPOINT"                  = var.cosmosdb_endpoint
-    "DB_DATABASE_NAME"                    = var.database_name
 
-    "AZURE_CLIENT_ID" = var.uami_client_id
+    "AZURE_CLIENT_ID"         = var.uami_client_id
+    "WEBSITE_CONTENTOVERVNET" = "1"
     # WEBSITE_VNET_ROUTE_ALL is now handled in site_config
-
-    # Enable build during deployment for code-based deploy
-    "SCM_DO_BUILD_DURING_DEPLOYMENT" = "true"
-    "ENABLE_ORYX_BUILD"              = "true"
   }
 
   site_config {
     vnet_route_all_enabled = true
-    always_on              = true
-    health_check_path      = "/api/health"
-    health_check_eviction_time_in_min = 2
 
-    cors {
-      allowed_origins     = var.allowed_origins
-      support_credentials = true
-    }
-
+    # IF USING DOCKER:
     application_stack {
-      python_version = "3.11"
+      docker {
+        registry_url = var.docker_registry_url
+        image_name   = var.image_name
+        image_tag    = var.image_tag
+      }
     }
+
+    # IF NOT USING DOCKER (Python):
+    # application_stack {
+    #   python_version = "3.11"
+    # }
   }
 }
 
-resource "azurerm_storage_share" "this" {
-  name                 = lower(var.funcapp_name)
-  storage_account_name = module.storage.storage_account_name
-  quota                = 50
+# 3. Private Endpoint for the Function App itself (Inbound access)
+module "pe" {
+  source                         = "../pe"
+  resource_name                  = "${var.funcapp_name}-sites"
+  rg_name                        = var.rg_name
+  region                         = var.region
+  subnet_id                      = var.pe_subnet_id
+  private_connection_resource_id = azurerm_linux_function_app.this.id
+  pe_subresource_type            = "sites"
+  private_dns_zone_id            = var.sites_dns_zone_id
 }
 
 # 1. The Storage Module (Infrastructure for the Function)
@@ -80,5 +79,4 @@ module "storage" {
   file_dns_zone_id  = var.file_dns_zone_id
   table_dns_zone_id = var.table_dns_zone_id
   queue_dns_zone_id = var.queue_dns_zone_id
-  public_network_access_enabled = var.public_network_access_enabled
 }

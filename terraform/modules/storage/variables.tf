@@ -43,6 +43,6 @@ variable "principal_id" {
 }
 
 variable "public_network_access_enabled" {
-  type        = bool
-  default     = false
+  type    = bool
+  default = false
 }
