@@ -39,8 +39,7 @@ resource "azurerm_linux_function_app" "this" {
     "COSMOS_DB_KEY"                                      = var.cosmosdb_key
     "COSMOS_DB_NAME"                                     = var.database_name
     "DB_DATABASE_NAME"                                   = var.database_name
-    "SCM_DO_BUILD_DURING_DEPLOYMENT"                     = "true"
-    "ENABLE_ORYX_BUILD"                                  = "true"
+    "WEBSITE_RUN_FROM_PACKAGE"                           = "1"
   }
 
   site_config {
