@@ -36,3 +36,5 @@ variable "webapp_name" {
   description = "The name of the Web App passed from GitHub Actions"
   type        = string
 }
+
+variable "zip_package_path" {}
