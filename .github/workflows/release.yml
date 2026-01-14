@@ -99,16 +99,16 @@ jobs:
           TF_VAR_secondary_region: ${{ env.SECONDARY_REGION }}
 
       - name: Checkout Code
-        if: ${{ github.event.inputs.destroy === 'false' }}
+        if: ${{ github.event.inputs.destroy == 'false' }}
         uses: actions/checkout@v4
 
       - name: Create Deployment Package
-        if: ${{ github.event.inputs.destroy === 'false' }}
+        if: ${{ github.event.inputs.destroy == 'false' }}
         # Ensure host.json is in the root of the zip
         run: zip -r release.zip appcode/backend -x "*.git*"
 
       - name: Azure Login
-        if: ${{ github.event.inputs.destroy === 'false' }}
+        if: ${{ github.event.inputs.destroy == 'false' }}
         uses: azure/login@v2
         with:
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
@@ -116,7 +116,7 @@ jobs:
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
       - name: Deploy to Azure Function
-        if: ${{ github.event.inputs.destroy === 'false' }}
+        if: ${{ github.event.inputs.destroy == 'false' }}
         uses: Azure/functions-action@v1
         with:
           app-name: 'emptrack-${{ env.ENV }}-${{ env.PRIMARY_REGION }}-funcapp'
