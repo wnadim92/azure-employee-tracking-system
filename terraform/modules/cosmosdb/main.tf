@@ -20,7 +20,7 @@ resource "azurerm_cosmosdb_account" "this" {
   }
   identity {
     type         = "UserAssigned"
-    identity_ids = [var.uami_resource_id] 
+    identity_ids = [var.uami_resource_id]
   }
 
   default_identity_type = join("=", ["UserAssignedIdentity", var.uami_resource_id])
@@ -42,7 +42,7 @@ resource "azurerm_cosmosdb_sql_database" "this" {
   name                = var.db_name
   resource_group_name = var.rg_name
   account_name        = azurerm_cosmosdb_account.this.name
-  throughput = 400
+  throughput          = 400
 }
 
 resource "azurerm_cosmosdb_sql_container" "this" {

@@ -18,8 +18,8 @@ module "emp_track_middle_funcapp" {
   table_dns_zone_id             = azurerm_private_dns_zone.table.id
   queue_dns_zone_id             = azurerm_private_dns_zone.queue.id
   sites_dns_zone_id             = azurerm_private_dns_zone.web.id
-  cosmosdb_key                  = module.emp_track_db.cosmosdb_primary_key 
-  database_name                 = module.emp_track_db.cosmosdb_database_name 
+  cosmosdb_key                  = module.emp_track_db.cosmosdb_primary_key
+  database_name                 = module.emp_track_db.cosmosdb_database_name
 }
 
 # contians private endpoint for middle tier Python FastAPI Backend Service Function App
