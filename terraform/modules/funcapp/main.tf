@@ -31,7 +31,7 @@ resource "azurerm_linux_function_app" "this" {
     "WEBSITE_SKIP_CONTENT_SHARE_VALIDATION"              = "1"
     "AzureFunctionsJobHost__Logging__Console__IsEnabled" = "true"
     "FUNCTIONS_WORKER_RUNTIME"                           = "python"
-    "WEBSITE_CONTENTOVERVNET"                            = "1"
+    #"WEBSITE_CONTENTOVERVNET"                            = "1"
     "FUNCTIONS_EXTENSION_VERSION"                        = "~4"
     "CosmosDbConnection__accountEndpoint"                = var.cosmosdb_endpoint
     "CosmosDbConnection__clientId"                       = var.uami_client_id
