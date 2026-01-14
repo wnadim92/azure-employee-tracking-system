@@ -33,15 +33,15 @@ resource "azurerm_linux_function_app" "this" {
     "FUNCTIONS_WORKER_RUNTIME"                           = "python"
     "WEBSITE_CONTENTOVERVNET"                            = "1"
     "WEBSITE_RUN_FROM_PACKAGE"                           = "1"
-    FUNCTIONS_EXTENSION_VERSION                          = "~4"
+    "FUNCTIONS_EXTENSION_VERSION"                        = "~4"
     "CosmosDbConnection__accountEndpoint"                = var.cosmosdb_endpoint
     "CosmosDbConnection__clientId"                       = var.uami_client_id
     "COSMOS_DB_ENDPOINT"                                 = var.cosmosdb_endpoint
     "COSMOS_DB_KEY"                                      = var.cosmosdb_key
     "COSMOS_DB_NAME"                                     = var.database_name
     "DB_DATABASE_NAME"                                   = var.database_name
-    "SCM_DO_BUILD_DURING_DEPLOYMENT"                     = "false"
-    "ENABLE_ORYX_BUILD"                                  = "false"
+    "SCM_DO_BUILD_DURING_DEPLOYMENT"                     = "true"
+    "ENABLE_ORYX_BUILD"                                  = "true"
   }
 
   site_config {
