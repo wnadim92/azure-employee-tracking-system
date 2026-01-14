@@ -18,7 +18,15 @@ resource "azurerm_cosmosdb_account" "this" {
     location          = var.region
     failover_priority = 0
   }
+  identity {
+    type         = "UserAssigned"
+    identity_ids = [var.uami_resource_id] 
+  }
+
+  # REQUIRED: Format must be "UserAssignedIdentity=<resource_id>"
+  default_identity_type = join("=", ["UserAssignedIdentity", var.uami_resource_id])
 }
+
 
 # db private endpoint
 module "pe" {

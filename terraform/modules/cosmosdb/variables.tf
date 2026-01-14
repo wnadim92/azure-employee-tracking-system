@@ -30,3 +30,5 @@ variable "principal_id" {
   type        = string
   description = "The id of the user assigned managed identity's princpal."
 }
+
+variable "uami_resource_id" {}

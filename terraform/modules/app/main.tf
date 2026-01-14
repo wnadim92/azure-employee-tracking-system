@@ -51,4 +51,5 @@ module "emp_track_db" {
   region              = var.region
   private_dns_zone_id = azurerm_private_dns_zone.cosmos.id
   principal_id        = module.emp_track_managed_identity.principal_id
+  uami_resource_id    = module.emp_track_managed_identity.uami_id
 }
