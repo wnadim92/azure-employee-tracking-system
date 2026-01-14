@@ -13,6 +13,7 @@ resource "azurerm_linux_function_app" "this" {
   location             = var.region
   service_plan_id      = azurerm_service_plan.this.id
   storage_account_name = module.storage.storage_account_name
+  storage_account_access_key = module.storage.primary_access_key
 
   storage_uses_managed_identity = false
   virtual_network_subnet_id     = var.vnet_integration_subnet_id
