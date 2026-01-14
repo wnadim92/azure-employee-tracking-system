@@ -17,7 +17,7 @@ variable "region" {
 
 variable "vnet_integration_subnet_id" {
   type        = string
-  description = "The subnet id to attach the pe to."
+  description = "The subnet id for virtual network integration."
 }
 
 # variable "pe_subnet_id" {
@@ -38,7 +38,24 @@ variable "uami_client_id" {
 }
 
 variable "uami_principal_id" {
+  type = string
 }
+
+# variable "blob_dns_zone_id" {
+#   type = string
+# }
+
+# variable "file_dns_zone_id" {
+#   type = string
+# }
+
+# variable "table_dns_zone_id" {
+#   type = string
+# }
+
+# variable "queue_dns_zone_id" {
+#   type = string
+# }
 
 variable "database_name" {}
 
@@ -52,4 +69,15 @@ variable "public_network_access_enabled" {
   description = "have function app still vnet integrate but not have it on private endpoint, and allow storage public access. Supports deployment from GitHub Actions"
   default     = false
 }
+
+# variable "sites_dns_zone_id" {
+#   default = null
+# }
+
 variable "cosmosdb_key" {}
+
+# variable "zip_package_path" {
+#   type        = string
+#   description = "The local path and filename of the Zip packaged application to deploy."
+#   default     = null
+# }
