@@ -6,6 +6,14 @@ resource "azurerm_subnet" "this" {
 
   private_endpoint_network_policies = "Enabled"
 
+  service_endpoints = [
+    "Microsoft.Storage",
+    "Microsoft.Sql",
+    "Microsoft.KeyVault",
+    "Microsoft.AzureCosmosDB",
+    "Microsoft.Web"
+  ]
+
   # Dynamic block: if var.delegation_service is null, this block is skipped
   dynamic "delegation" {
     for_each = var.delegation_service != null ? [1] : []
