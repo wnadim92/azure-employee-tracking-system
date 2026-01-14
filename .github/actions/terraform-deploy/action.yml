@@ -4,7 +4,7 @@ inputs:
   TF_VERSION:
     description: 'The Terraform version to use'
     required: false 
-    default: "1.14.3" # Updated to latest 2026 version
+    default: "1.14.3" 
   TARGET_ENVIRONMENT:
     description: 'Target environment (nonprod, prod)'
     required: true
@@ -45,7 +45,7 @@ runs:
   using: "composite"
   steps:
     - name: setup terraform
-      uses: hashicorp/setup-terraform@v3 # Updated to v3
+      uses: hashicorp/setup-terraform@v3 
       with:
         terraform_version: ${{ inputs.TF_VERSION }}
 
@@ -57,7 +57,6 @@ runs:
         TF_VAR_webapp_name: ${{ inputs.WEBAPP_NAME }}
         TF_VAR_image_tag: ${{ inputs.IMAGE_TAG }}
       run: |
-        # Use -reconfigure to ensure backend stays fresh
         terraform init -reconfigure -backend-config="${{ inputs.TARGET_ENVIRONMENT }}/terraform.tfbackend"
 
         # Construct var arguments (CLI -var overrides tfvars)
@@ -76,7 +75,6 @@ runs:
           terraform plan -destroy -var-file="${{ inputs.TARGET_ENVIRONMENT }}/terraform.tfvars" $VAR_ARGS -out=tfplan
         else
           echo "Running terraform plan..."
-          # Fixed typo: changed -out=tflan to -out=tfplan
           terraform plan -var-file="${{ inputs.TARGET_ENVIRONMENT }}/terraform.tfvars" $VAR_ARGS -out=tfplan
         fi
 

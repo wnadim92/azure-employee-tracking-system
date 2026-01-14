@@ -3,5 +3,5 @@ fastapi
 uvicorn
 azure-cosmos
 azure-identity
-pydantic # Explicitly add for FastAPI models
-azure-core # Explicitly add for Azure SDK core functionality
+pydantic 
+azure-core 
