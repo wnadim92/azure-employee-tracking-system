@@ -37,4 +37,4 @@ variable "webapp_name" {
   type        = string
 }
 
-variable "zip_package_path" {}
+//ariable "zip_package_path" {}
