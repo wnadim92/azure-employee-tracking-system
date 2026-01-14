@@ -32,12 +32,15 @@ resource "azurerm_linux_function_app" "this" {
     "FUNCTIONS_WORKER_RUNTIME"                           = "python"
 
     "CosmosDbConnection__accountEndpoint" = var.cosmosdb_endpoint
-    "CosmosDbConnection__credential"      = "managedidentity"
+    #"CosmosDbConnection__credential"      = "managedidentity"
     "CosmosDbConnection__clientId"        = var.uami_client_id
     "COSMOS_DB_ENDPOINT"                  = var.cosmosdb_endpoint
+    "COSMOS_DB_KEY"                      = var.cosmosdb_key
+    "COSMOS_DB_NAME"                     = var.database_name
+
     "DB_DATABASE_NAME"                    = var.database_name
 
-    "AZURE_CLIENT_ID" = var.uami_client_id
+    #"AZURE_CLIENT_ID" = var.uami_client_id
     # WEBSITE_VNET_ROUTE_ALL is now handled in site_config
 
     # Enable build during deployment for code-based deploy

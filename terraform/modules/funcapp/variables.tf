@@ -81,3 +81,5 @@ variable "public_network_access_enabled" {
 }
 
 variable "sites_dns_zone_id" {}
+
+variable "cosmosdb_key" {}

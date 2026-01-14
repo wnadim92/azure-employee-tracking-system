@@ -23,10 +23,6 @@ resource "azurerm_cosmosdb_account" "this" {
     identity_ids = [var.uami_resource_id] 
   }
 
-  capabilities {
-    name = "EnableSqlRoleBasedAccessControl"
-  }
-
   # REQUIRED: Format must be "UserAssignedIdentity=<resource_id>"
   default_identity_type = join("=", ["UserAssignedIdentity", var.uami_resource_id])
 }

@@ -22,10 +22,6 @@ module "emp_track_middle_funcapp" {
   rg_name                       = module.rg.rg_name
   region                        = var.region
   cosmosdb_endpoint             = module.emp_track_db.cosmosdb_endpoint
-  docker_registry_url           = var.docker_registry_url
-  image_name                    = var.backend_image_name
-  image_tag                     = var.image_tag
-  database_name                 = "${var.project_name}-${var.environment}-${var.region}-db"
   allowed_origins               = ["https://${var.project_name}-${var.environment}-${var.region}-appsvc.azurewebsites.net"]
   public_network_access_enabled = true
   blob_dns_zone_id              = azurerm_private_dns_zone.blob.id
@@ -33,6 +29,8 @@ module "emp_track_middle_funcapp" {
   table_dns_zone_id             = azurerm_private_dns_zone.table.id
   queue_dns_zone_id             = azurerm_private_dns_zone.queue.id
   sites_dns_zone_id             = azurerm_private_dns_zone.web.id
+  cosmosdb_key                  = module.emp_track_db.cosmosdb_primary_key # <--- New input
+  database_name                 = module.emp_track_db.cosmosdb_database_name 
 }
 
 module "emp_track_managed_identity" {

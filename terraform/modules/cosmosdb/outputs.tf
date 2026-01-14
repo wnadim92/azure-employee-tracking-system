@@ -1,3 +1,16 @@
+# The Primary Key (for key-based auth)
+output "cosmosdb_primary_key" {
+  description = "The primary access key for the Cosmos DB account."
+  value       = azurerm_cosmosdb_account.this.primary_key
+  sensitive   = true # Mark as sensitive
+}
+
+# The endpoint URI
+output "cosmosdb_endpoint" {
+  description = "The endpoint used to connect to the Cosmos DB account."
+  value       = azurerm_cosmosdb_account.this.endpoint
+}
+
 # The primary endpoint for the Function App connection string (Identity-based)
 output "cosmosdb_endpoint" {
   description = "The endpoint used to connect to the Cosmos DB account."
