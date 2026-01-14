@@ -1,16 +1,5 @@
 
-module "emp_track_frontend_appsvc" {
-  source              = "../../modules/static-webapp"
-  app_svc_name        = "${var.project_name}-${var.environment}-${var.region}-appsvc"
-  uami_resource_id    = module.emp_track_managed_identity.uami_id
-  rg_name             = module.rg.rg_name
-  region              = var.region
-  docker_registry_url = var.docker_registry_url
-  image_name          = var.frontend_image_name
-  image_tag           = var.image_tag
-  backend_url         = "https://${var.project_name}-${var.environment}-${var.region}-funcapp.azurewebsites.net"
-}
-
+# FastAPI Backend Service Function App
 module "emp_track_middle_funcapp" {
   source                        = "../../modules/funcapp"
   funcapp_name                  = "${var.project_name}-${var.environment}-${var.region}-funcapp"
@@ -29,15 +18,32 @@ module "emp_track_middle_funcapp" {
   table_dns_zone_id             = azurerm_private_dns_zone.table.id
   queue_dns_zone_id             = azurerm_private_dns_zone.queue.id
   sites_dns_zone_id             = azurerm_private_dns_zone.web.id
-  cosmosdb_key                  = module.emp_track_db.cosmosdb_primary_key # <--- New input
+  cosmosdb_key                  = module.emp_track_db.cosmosdb_primary_key 
   database_name                 = module.emp_track_db.cosmosdb_database_name 
 }
 
-module "emp_track_managed_identity" {
-  source         = "../../modules/managed_identity"
-  rg_name        = module.rg.rg_name
-  region         = var.region
-  principal_name = "${var.project_name}-${var.environment}-${var.region}-sa"
+# contians private endpoint for middle tier Python FastAPI Backend Service Function App
+# App storage account private endpoints attached, blob, table, queue, files
+module "emp_track_middletier_pe_snet" {
+  source      = "../../modules/subnet"
+  subnet_type = "private"
+  cidr        = var.emp_track_middletier_pe_snet_cidr
+  subnet_name = "${var.project_name}-${var.environment}-${var.region}-mid-pe-snet"
+  rg_name     = module.rg.rg_name
+  vnet_name   = module.vnet.vnet_name
+  region      = var.region
+}
+
+# VNET Integrating Python FastAPI Backend Service Function App for internal communication to database
+module "emp_track_middletier_vnetintegration_snet" {
+  source             = "../../modules/subnet"
+  subnet_type        = "private"
+  cidr               = var.emp_track_middletier_vnetintegration_snet_cidr
+  subnet_name        = "${var.project_name}-${var.environment}-${var.region}-mid-vnetinteg-snet"
+  rg_name            = module.rg.rg_name
+  vnet_name          = module.vnet.vnet_name
+  region             = var.region
+  delegation_service = "Microsoft.Web/serverFarms"
 }
 
 # cosmos db
@@ -50,4 +56,22 @@ module "emp_track_db" {
   private_dns_zone_id = azurerm_private_dns_zone.cosmos.id
   principal_id        = module.emp_track_managed_identity.principal_id
   uami_resource_id    = module.emp_track_managed_identity.uami_id
+}
+
+module "emp_track_db_pe_snet" {
+  source      = "../../modules/subnet"
+  subnet_type = "private"
+  cidr        = var.emp_track_db_snet_cidr
+  subnet_name = "${var.project_name}-${var.environment}-${var.region}-db-snet"
+  rg_name     = module.rg.rg_name
+  vnet_name   = module.vnet.vnet_name
+  region      = var.region
+}
+
+# User Assigned Managed Identity with access Function App to storage account
+module "emp_track_managed_identity" {
+  source         = "../../modules/managed_identity"
+  rg_name        = module.rg.rg_name
+  region         = var.region
+  principal_name = "${var.project_name}-${var.environment}-${var.region}-sa"
 }

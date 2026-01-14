@@ -1,4 +1,4 @@
-# 1. Cosmos DB Account with Free Tier
+
 resource "azurerm_cosmosdb_account" "this" {
   name                = lower("${var.db_name}")
   location            = var.region
@@ -23,10 +23,8 @@ resource "azurerm_cosmosdb_account" "this" {
     identity_ids = [var.uami_resource_id] 
   }
 
-  # REQUIRED: Format must be "UserAssignedIdentity=<resource_id>"
   default_identity_type = join("=", ["UserAssignedIdentity", var.uami_resource_id])
 }
-
 
 # db private endpoint
 module "pe" {
@@ -40,18 +38,13 @@ module "pe" {
   private_dns_zone_id            = var.private_dns_zone_id
 }
 
-# 2. SQL Database with SHARED throughput
 resource "azurerm_cosmosdb_sql_database" "this" {
   name                = var.db_name
   resource_group_name = var.rg_name
   account_name        = azurerm_cosmosdb_account.this.name
-
-  # Set throughput here so all containers share it
-  # 400 is the minimum, well within the 1000 RU free limit
   throughput = 400
 }
 
-# 3. SQL Container (Remove individual throughput)
 resource "azurerm_cosmosdb_sql_container" "this" {
   name                = var.db_name
   resource_group_name = var.rg_name
@@ -61,11 +54,10 @@ resource "azurerm_cosmosdb_sql_container" "this" {
 }
 
 # 4. Resolve and Assign Built-in Data Role
-# This replaces the "random zeros" with a dynamic reference
 data "azurerm_cosmosdb_sql_role_definition" "data_contributor" {
   resource_group_name = var.rg_name
   account_name        = azurerm_cosmosdb_account.this.name
-  role_definition_id  = "00000000-0000-0000-0000-000000000002" # Constant for 'Contributor'
+  role_definition_id  = "00000000-0000-0000-0000-000000000002" # built in data role
 }
 
 resource "azurerm_cosmosdb_sql_role_assignment" "this" {

@@ -26,26 +26,19 @@ resource "azurerm_linux_function_app" "this" {
     "AzureWebJobsStorage"                                = module.storage.primary_connection_string
     "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING"           = module.storage.primary_connection_string
     "WEBSITE_CONTENTSHARE"                               = azurerm_storage_share.this.name
-    "WEBSITE_DNS_SERVER"                                 = "168.63.129.16"
+    "WEBSITE_DNS_SERVER"                                 = "168.63.129.16" # Required for Azure DNS so can reach azure DNS such as for private endpoint DNS Zones
     "WEBSITE_SKIP_CONTENT_SHARE_VALIDATION"              = "1"
     "AzureFunctionsJobHost__Logging__Console__IsEnabled" = "true"
     "FUNCTIONS_WORKER_RUNTIME"                           = "python"
     "WEBSITE_CONTENTOVERVNET"                            = "1"
     "WEBSITE_RUN_FROM_PACKAGE"                           = "1"
-
+    FUNCTIONS_EXTENSION_VERSION = "~4"
     "CosmosDbConnection__accountEndpoint" = var.cosmosdb_endpoint
-    #"CosmosDbConnection__credential"      = "managedidentity"
     "CosmosDbConnection__clientId"        = var.uami_client_id
     "COSMOS_DB_ENDPOINT"                  = var.cosmosdb_endpoint
     "COSMOS_DB_KEY"                      = var.cosmosdb_key
     "COSMOS_DB_NAME"                     = var.database_name
-
     "DB_DATABASE_NAME"                    = var.database_name
-
-    #"AZURE_CLIENT_ID" = var.uami_client_id
-    # WEBSITE_VNET_ROUTE_ALL is now handled in site_config
-
-    # Disable server-side builds to avoid Oryx VNET issues
     "SCM_DO_BUILD_DURING_DEPLOYMENT" = "false"
     "ENABLE_ORYX_BUILD"              = "false"
   }
@@ -73,7 +66,6 @@ resource "azurerm_storage_share" "this" {
   quota                = 50
 }
 
-# 1. The Storage Module (Infrastructure for the Function)
 module "storage" {
   source                        = "../storage"
   strg_name                     = lower(substr(replace(var.funcapp_name, "-", ""), 0, 24))
