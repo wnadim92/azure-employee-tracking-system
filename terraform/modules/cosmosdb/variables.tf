@@ -16,16 +16,6 @@ variable "region" {
   default     = "eastus"
 }
 
-variable "subnet_id" {
-  type        = string
-  description = "The subnet id to attach the pe to."
-}
-
-variable "private_dns_zone_id" {
-  type        = string
-  description = "The dns zone id to attach the pe to."
-}
-
 variable "principal_id" {
   type        = string
   description = "The id of the user assigned managed identity's princpal."
