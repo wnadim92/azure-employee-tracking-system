@@ -20,10 +20,10 @@ variable "vnet_integration_subnet_id" {
   description = "The subnet id to attach the pe to."
 }
 
-variable "pe_subnet_id" {
-  type        = string
-  description = "The subnet id to attach the pe to."
-}
+# variable "pe_subnet_id" {
+#   type        = string
+#   description = "The subnet id to attach the pe to."
+# }
 
 variable "cosmosdb_endpoint" {
   type = string
@@ -41,21 +41,21 @@ variable "uami_principal_id" {
   type = string
 }
 
-variable "blob_dns_zone_id" {
-  type = string
-}
+# variable "blob_dns_zone_id" {
+#   type = string
+# }
 
-variable "file_dns_zone_id" {
-  type = string
-}
+# variable "file_dns_zone_id" {
+#   type = string
+# }
 
-variable "table_dns_zone_id" {
-  type = string
-}
+# variable "table_dns_zone_id" {
+#   type = string
+# }
 
-variable "queue_dns_zone_id" {
-  type = string
-}
+# variable "queue_dns_zone_id" {
+#   type = string
+# }
 
 variable "database_name" {}
 
