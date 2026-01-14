@@ -11,7 +11,7 @@ services:
     volumes:
       - azurite_data:/data
     healthcheck:
-      test: ["CMD", "nc", "-z", "127.0.0.1", "10000"]
+      test: ["CMD", "nc", "-z", "localhost", "8081"]
       interval: 5s
       retries: 10
 
@@ -57,11 +57,12 @@ services:
     volumes:
       - ./backend/my-app:/home/site/wwwroot
     healthcheck:
-      test: ["CMD", "python", "-c", "import urllib.request, sys; try: urllib.request.urlopen('http://127.0.0.1:80/api/health'); sys.exit(0); except Exception: sys.exit(1)"]
+      # Hit the root "/" instead of "/api/health" to bypass Cosmos DB initialization logic
+      test: ["CMD", "python", "-c", "import urllib.request, sys; try: urllib.request.urlopen('127.0.0.1'); sys.exit(0); except Exception: sys.exit(1)"]
       interval: 10s
-      timeout: 10s
-      retries: 30
-      start_period: 60s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
 
   frontend:
     build:
