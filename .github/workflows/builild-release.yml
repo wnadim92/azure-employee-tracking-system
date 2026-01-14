@@ -1,4 +1,4 @@
-name: HR Tracking Full Stack Azure Application
+name: HR Tracking Azure Application
 
 on:
   workflow_dispatch:
