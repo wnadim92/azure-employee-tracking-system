@@ -41,7 +41,6 @@ run-name: >
 
 jobs:
   build:
-    # This job will skip if destroy is true OR skip_build is true
     if: ${{ github.event.inputs.destroy == 'false' && github.event.inputs.skip_build == 'false' }}
     runs-on: ubuntu-latest  
     steps:
@@ -67,12 +66,10 @@ jobs:
           BUILD_ARGS: "REACT_APP_API_URL=https://emptrack-${{ env.ENV }}-${{ env.PRIMARY_REGION }}-funcapp.azurewebsites.net/api"
 
   release:
-    # Use if: always() so that release runs even if build is skipped
     if: always()
     needs: [build]
     runs-on: ubuntu-latest
     steps:
-      # Check if previous build failed (ignore if it was simply skipped)
       - name: Check Build Status
         if: ${{ needs.build.result == 'failure' }}
         run: exit 1
@@ -87,14 +84,16 @@ jobs:
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
-      # - name: Create Deployment Package
-      #   if: ${{ github.event.inputs.destroy == 'false' }}
-      #   run: |
-      #     cd appcode/backend/my-app
-      #     # IMPORTANT: For Python, you must install dependencies if SCM_DO_BUILD is false
-      #     pip install -r requirements.txt --target=".python_packages/lib/site-packages"
-      #     zip -r ../../../release.zip . -x "*.git*"
+      # 1. CREATE PACKAGE (Must happen before deploy)
+      - name: Create Deployment Package
+        if: ${{ github.event.inputs.destroy == 'false' }}
+        run: |
+          cd appcode/backend/my-app
+          # Python dependencies installed to target folder for "Run From Package"
+          pip install -r requirements.txt --target=".python_packages/lib/site-packages"
+          zip -r ../../../release.zip . -x "*.git*"
 
+      # 2. DEPLOY INFRASTRUCTURE (Purely resources, no code)
       - name: Deploy Infrastructure
         uses: ./.github/actions/terraform-deploy
         with:
@@ -108,24 +107,13 @@ jobs:
           ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
           TF_VAR_shouldBeMultiRegion: ${{ github.event.inputs.multiregion }}
           TF_VAR_secondary_region: ${{ env.SECONDARY_REGION }}
-          TF_VAR_zip_package_path: ${{ github.event.inputs.destroy == 'false' && '../../release.zip' || '' }}
+          # REMOVED: TF_VAR_zip_package_path (Not needed here anymore)
 
-      - name: Checkout Code
-        if: ${{ github.event.inputs.destroy == 'false' }}
-        uses: actions/checkout@v4
-
-      - name: Create Deployment Package
-        if: ${{ github.event.inputs.destroy == 'false' }}
-        run: |
-          cd appcode/backend/my-app
-          # IMPORTANT: For Python, you must install dependencies if SCM_DO_BUILD is false
-          pip install -r requirements.txt --target=".python_packages/lib/site-packages"
-          zip -r ../../../release.zip . -x "*.git*"
-
+      # 3. DEPLOY CODE (Pushes the zip to the Infrastructure)
       - name: Deploy to Azure Function
         if: ${{ github.event.inputs.destroy == 'false' }}
         uses: Azure/functions-action@v1
         with:
           app-name: 'emptrack-${{ env.ENV }}-${{ env.PRIMARY_REGION }}-funcapp'
           package: 'release.zip'
-          scm-do-build-during-deployment: false
+          scm-do-build-during-deployment: false # We built it manually in step 1

@@ -74,8 +74,8 @@ variable "sites_dns_zone_id" {}
 
 variable "cosmosdb_key" {}
 
-variable "zip_package_path" {
-  type        = string
-  description = "The local path and filename of the Zip packaged application to deploy."
-  default     = null
-}
+# variable "zip_package_path" {
+#   type        = string
+#   description = "The local path and filename of the Zip packaged application to deploy."
+#   default     = null
+# }

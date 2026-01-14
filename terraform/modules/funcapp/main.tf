@@ -23,7 +23,7 @@ resource "azurerm_linux_function_app" "this" {
     identity_ids = [var.uami_resource_id]
   }
 
-  zip_deploy_file = var.zip_package_path
+  # zip_deploy_file = var.zip_package_path
 
   app_settings = {
     "AzureWebJobsStorage"                                = azurerm_storage_account.this.primary_connection_string
@@ -42,7 +42,7 @@ resource "azurerm_linux_function_app" "this" {
     "COSMOS_DB_NAME"                                     = var.database_name
     "DB_DATABASE_NAME"                                   = var.database_name
     "WEBSITE_RUN_FROM_PACKAGE"                           = "1"
-    //"SCM_DO_BUILD_DURING_DEPLOYMENT" = "true"
+    "SCM_DO_BUILD_DURING_DEPLOYMENT" = "false"
     // "DOCDBCONNSTR_" = 
   }
 
