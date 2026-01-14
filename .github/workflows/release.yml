@@ -61,7 +61,7 @@ jobs:
           BUILD_ARGS: "REACT_APP_API_URL=https://emptrack-${{ env.ENV }}-${{ env.PRIMARY_REGION }}-funcapp.azurewebsites.net/api"
 
   release:
-    needs: [build-images]
+    needs: [build]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
