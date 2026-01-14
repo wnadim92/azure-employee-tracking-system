@@ -66,8 +66,6 @@ resource "azurerm_linux_function_app" "this" {
 resource "azurerm_storage_share" "this" {
   name                 = lower(var.funcapp_name)
   storage_account_name = azurerm_storage_account.this.name
-  resource_group_name  = var.rg_name
-  location             = var.region
   quota                = 50
 }
 
@@ -87,11 +85,10 @@ resource "azurerm_storage_account" "this" {
   }
 }
 
-
 resource "azurerm_role_assignment" "storage_access" {
   scope                = azurerm_storage_account.this.id
   role_definition_name = "Storage Blob Data Contributor"
-  principal_id         = var.principal_id
+  principal_id         = var.uami_principal_id
 
   # Recommended for new identities to prevent replication lag errors
   skip_service_principal_aad_check = true
