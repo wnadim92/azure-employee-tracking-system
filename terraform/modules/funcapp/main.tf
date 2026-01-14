@@ -23,6 +23,8 @@ resource "azurerm_linux_function_app" "this" {
     identity_ids = [var.uami_resource_id]
   }
 
+  zip_deploy_file = var.zip_package_path
+
   app_settings = {
     "AzureWebJobsStorage"                                = module.storage.primary_connection_string
     "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING"           = module.storage.primary_connection_string

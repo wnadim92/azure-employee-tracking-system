@@ -16,6 +16,7 @@ module "app_primary_region" {
   frontend_image_name                            = var.frontend_image_name
   backend_image_name                             = var.backend_image_name
   image_tag                                      = var.image_tag
+  zip_package_path                               = var.zip_package_path
 }
 
 module "app_secondary_region" {
@@ -36,4 +37,5 @@ module "app_secondary_region" {
   frontend_image_name                            = var.frontend_image_name
   backend_image_name                             = var.backend_image_name
   image_tag                                      = var.image_tag
+  zip_package_path                               = var.zip_package_path
 }

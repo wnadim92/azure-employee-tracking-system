@@ -87,6 +87,14 @@ jobs:
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
+      - name: Create Deployment Package
+        if: ${{ github.event.inputs.destroy == 'false' }}
+        run: |
+          cd appcode/backend/my-app
+          # IMPORTANT: For Python, you must install dependencies if SCM_DO_BUILD is false
+          pip install -r requirements.txt --target=".python_packages/lib/site-packages"
+          zip -r ../../../release.zip . -x "*.git*"
+
       - name: Deploy Infrastructure
         uses: ./.github/actions/terraform-deploy
         with:
@@ -100,23 +108,24 @@ jobs:
           ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
           TF_VAR_shouldBeMultiRegion: ${{ github.event.inputs.multiregion }}
           TF_VAR_secondary_region: ${{ env.SECONDARY_REGION }}
+          TF_VAR_zip_package_path: ${{ github.event.inputs.destroy == 'false' && '../../release.zip' || '' }}
 
-      - name: Checkout Code
-        if: ${{ github.event.inputs.destroy == 'false' }}
-        uses: actions/checkout@v4
+      # - name: Checkout Code
+      #   if: ${{ github.event.inputs.destroy == 'false' }}
+      #   uses: actions/checkout@v4
 
-      - name: Create Deployment Package
-        if: ${{ github.event.inputs.destroy == 'false' }}
-        run: |
-          cd appcode/backend/my-app
-          # IMPORTANT: For Python, you must install dependencies if SCM_DO_BUILD is false
-          pip install -r requirements.txt --target=".python_packages/lib/site-packages"
-          zip -r ../../../release.zip . -x "*.git*"
+      # - name: Create Deployment Package
+      #   if: ${{ github.event.inputs.destroy == 'false' }}
+      #   run: |
+      #     cd appcode/backend/my-app
+      #     # IMPORTANT: For Python, you must install dependencies if SCM_DO_BUILD is false
+      #     pip install -r requirements.txt --target=".python_packages/lib/site-packages"
+      #     zip -r ../../../release.zip . -x "*.git*"
 
-      - name: Deploy to Azure Function
-        if: ${{ github.event.inputs.destroy == 'false' }}
-        uses: Azure/functions-action@v1
-        with:
-          app-name: 'emptrack-${{ env.ENV }}-${{ env.PRIMARY_REGION }}-funcapp'
-          package: 'release.zip'
-          scm-do-build-during-deployment: false
+      # - name: Deploy to Azure Function
+      #   if: ${{ github.event.inputs.destroy == 'false' }}
+      #   uses: Azure/functions-action@v1
+      #   with:
+      #     app-name: 'emptrack-${{ env.ENV }}-${{ env.PRIMARY_REGION }}-funcapp'
+      #     package: 'release.zip'
+      #     scm-do-build-during-deployment: false
