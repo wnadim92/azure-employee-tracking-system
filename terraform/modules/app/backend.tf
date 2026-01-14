@@ -49,11 +49,9 @@ module "emp_track_middletier_vnetintegration_snet" {
 # cosmos db
 module "emp_track_db" {
   source              = "../../modules/cosmosdb"
-  subnet_id           = module.emp_track_db_pe_snet.subnet_id
   db_name             = "${var.project_name}-${var.environment}-${var.region}-db"
   rg_name             = module.rg.rg_name
   region              = var.region
-  private_dns_zone_id = azurerm_private_dns_zone.cosmos.id
   principal_id        = module.emp_track_managed_identity.principal_id
   uami_resource_id    = module.emp_track_managed_identity.uami_id
 }

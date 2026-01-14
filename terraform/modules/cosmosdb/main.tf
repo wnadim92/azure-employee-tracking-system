@@ -26,18 +26,6 @@ resource "azurerm_cosmosdb_account" "this" {
   default_identity_type = join("=", ["UserAssignedIdentity", var.uami_resource_id])
 }
 
-# db private endpoint
-module "pe" {
-  source                         = "../pe"
-  resource_name                  = var.db_name
-  rg_name                        = var.rg_name
-  region                         = var.region
-  subnet_id                      = var.subnet_id
-  private_connection_resource_id = azurerm_cosmosdb_account.this.id
-  pe_subresource_type            = "Sql"
-  private_dns_zone_id            = var.private_dns_zone_id
-}
-
 resource "azurerm_cosmosdb_sql_database" "this" {
   name                = var.db_name
   resource_group_name = var.rg_name
