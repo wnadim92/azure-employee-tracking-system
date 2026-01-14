@@ -27,14 +27,4 @@ variable "backend_image_name" {}
 variable "docker_registry_url" {}
 variable "image_tag" {}
 
-variable "funcapp_name" {
-  description = "The name of the Function App passed from GitHub Actions"
-  type        = string
-}
-
-variable "webapp_name" {
-  description = "The name of the Web App passed from GitHub Actions"
-  type        = string
-}
-
-//ariable "zip_package_path" {}
+// variable "zip_package_path" {}
