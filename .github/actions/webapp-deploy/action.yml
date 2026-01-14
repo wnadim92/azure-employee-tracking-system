@@ -14,12 +14,6 @@ inputs:
   REGION:
     description: 'Azure Region'
     required: true
-  FUNCAPP_NAME:
-    description: 'Name of the Function App for Terraform'
-    required: false
-  WEBAPP_NAME:
-    description: 'Name of the Web App for Terraform'
-    required: false
   DESTROY:
     description: 'Destroy resources'
     required: false
@@ -28,47 +22,19 @@ inputs:
     description: 'Path to the code package to deploy'
     required: false
     default: '.'
-  IMAGES:
-    description: 'Docker Image to deploy (e.g., myregistry.azurecr.io/myimage:latest)'
-    required: false
-  IMAGE_TAG:
-    description: 'Tag for the Docker Image (for Terraform)'
-    required: false
-    default: 'latest'
   DEPLOY_TARGET_NAME:
     description: 'Name of the specific App Service/Function to deploy code to'
     required: false
-  TARGET_RESOURCE_TYPE:
-    description: 'If DEPLOY_TARGET_NAME is empty, use terraform output: "web" or "function"'
-    required: false
-    default: 'function'
 
 runs:
   using: "composite"
   steps:
-    - name: Run Terraform Deploy
-      uses: ./.github/actions/terraform-deploy
-      id: tf_deploy
-      with:
-        TARGET_ENVIRONMENT: ${{ inputs.TARGET_ENVIRONMENT }}
-        CHECKOUT_PATH: ${{ inputs.CHECKOUT_PATH }}
-        WORKING_DIRECTORY: ${{ inputs.WORKING_DIRECTORY }}
-        REGION: ${{ inputs.REGION }}
-        DESTROY: ${{ inputs.DESTROY }}
-        FUNCAPP_NAME: ${{ inputs.FUNCAPP_NAME }}
-        WEBAPP_NAME: ${{ inputs.WEBAPP_NAME }}
-        IMAGE_TAG: ${{ inputs.IMAGE_TAG }}
-
     - name: Determine Target App Name
       id: target
       shell: bash
       run: |
         if [ -n "${{ inputs.DEPLOY_TARGET_NAME }}" ]; then
           echo "name=${{ inputs.DEPLOY_TARGET_NAME }}" >> $GITHUB_OUTPUT
-        elif [ "${{ inputs.TARGET_RESOURCE_TYPE }}" == "web" ]; then
-          echo "name=${{ steps.tf_deploy.outputs.webapp_name }}" >> $GITHUB_OUTPUT
-        else
-          echo "name=${{ steps.tf_deploy.outputs.funcapp_name }}" >> $GITHUB_OUTPUT
         fi
 
     - name: Debug Deployment Inputs
