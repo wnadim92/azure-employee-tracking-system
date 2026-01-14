@@ -49,16 +49,6 @@ jobs:
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
-      # - name: Build FastAPI Backend
-      #   uses: ./.github/actions/docker-build
-      #   with:
-      #     REGISTRY_LOGIN_SERVER: ${{ secrets.REGISTRY_LOGIN_SERVER }} 
-      #     REGISTRY_USERNAME: ${{ secrets.REGISTRY_USERNAME }}
-      #     REGISTRY_PASSWORD: ${{ secrets.REGISTRY_PASSWORD }}
-      #     IMAGE_NAME: "emptrack-backend"
-      #     PROJECT_PATH: 'appcode/backend/my-app'   
-      #     IMAGE_TAG: ${{ github.sha }}
-
       - name: Build React App
         uses: ./.github/actions/docker-build
         with:
@@ -105,7 +95,9 @@ jobs:
       - name: Create Deployment Package
         if: ${{ github.event.inputs.destroy == 'false' }}
         # Ensure host.json is in the root of the zip
-        run: zip -r release.zip appcode/backend/my-app -x "*.git*"
+        run: |
+          cd appcode/backend/my-app
+          zip -r ../../../release.zip . -x "*.git*"
 
       - name: Azure Login
         if: ${{ github.event.inputs.destroy == 'false' }}
