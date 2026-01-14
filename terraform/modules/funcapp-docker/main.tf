@@ -30,6 +30,8 @@ resource "azurerm_linux_function_app" "this" {
     "CosmosDbConnection__accountEndpoint" = var.cosmosdb_endpoint
     "CosmosDbConnection__credential"      = "managedidentity"
     "CosmosDbConnection__clientId"        = var.uami_client_id
+    "COSMOS_DB_ENDPOINT"                  = var.cosmosdb_endpoint
+    "DB_DATABASE_NAME"                    = var.database_name
 
     "AZURE_CLIENT_ID"         = var.uami_client_id
     "WEBSITE_CONTENTOVERVNET" = "1"
