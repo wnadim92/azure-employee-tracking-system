@@ -149,4 +149,4 @@ def delete_employee(employee_id: str):
 # Mount routes at root (for Azure Functions which adds /api prefix)
 app.include_router(router)
 # Mount routes at /api (for Local Docker Compose which has no prefix)
-# app.include_router(router, prefix="/api")
+app.include_router(router, prefix="/api")
