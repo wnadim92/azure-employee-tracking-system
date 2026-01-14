@@ -14,7 +14,7 @@ function App() {
     manager: ''
   });
 
-  // Access the environment variable injected by Docker
+  // Access the environment variable injected by Docker or Azure dynamically
   const API_BASE = process.env.REACT_APP_API_BASE_URL || 'http://localhost:7071';
 
   useEffect(() => {

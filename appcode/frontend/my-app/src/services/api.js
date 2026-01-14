@@ -1,4 +1,23 @@
-// // Simulating an async database call
+
+// dynamically works for docker compose or for Azure Deployments
+const API_URL = process.env.REACT_APP_API_BASE_URL || "http://localhost:7071";
+
+export const getEmployees = async () => {
+  const response = await fetch(`${API_URL}/employees`);
+  if (!response.ok) throw new Error("Failed to fetch employees");
+  return await response.json();
+};
+
+export const saveEmployee = async (employee) => {
+  const response = await fetch(`${API_URL}/employee`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(employee),
+  });
+  return await response.json();
+};
+
+// // Simulating an async database call for front end only testing
 // const MOCK_DATA = [
 //   { id: 1, name: "Alice Smith", address: "123 Maple St, FL", dob: "1990-05-15", 
 //     role: "Software Engineer", hireDate: "2020-01-15", manager: "Bob Jones" },
@@ -24,21 +43,3 @@
 //     }, 500);
 //   });
 // };
-
-
-const API_URL = process.env.REACT_APP_API_BASE_URL || "http://localhost:7071";
-
-export const getEmployees = async () => {
-  const response = await fetch(`${API_URL}/employees`);
-  if (!response.ok) throw new Error("Failed to fetch employees");
-  return await response.json();
-};
-
-export const saveEmployee = async (employee) => {
-  const response = await fetch(`${API_URL}/employee`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(employee),
-  });
-  return await response.json();
-};

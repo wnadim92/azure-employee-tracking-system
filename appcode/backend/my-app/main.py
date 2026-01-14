@@ -34,7 +34,6 @@ def get_container():
     if _container:
         return _container
 
-    # Lazy imports to prevent startup crashes if dependencies are missing
     from azure.cosmos import CosmosClient, PartitionKey
     from azure.identity import DefaultAzureCredential
 
@@ -42,7 +41,6 @@ def get_container():
     endpoint = os.getenv("COSMOS_DB_ENDPOINT")
     db_name = os.getenv("DB_DATABASE_NAME", "EmployeeDB")
     
-    # For local development, use the master key. For production, use DefaultAzureCredential.
     key = os.getenv("COSMOS_DB_KEY")
     
     if key:

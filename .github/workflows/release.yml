@@ -36,7 +36,7 @@ run-name: >
   (MultiRegion: ${{ github.event.inputs.multiregion }})
 
 jobs:
-  build-images:
+  build:
     runs-on: ubuntu-latest  
     steps:
       - name: Checkout
@@ -60,7 +60,7 @@ jobs:
           IMAGE_TAG: ${{ github.sha }}
           BUILD_ARGS: "REACT_APP_API_URL=https://emptrack-${{ env.ENV }}-${{ env.PRIMARY_REGION }}-funcapp.azurewebsites.net/api"
 
-  provision-infra:
+  release:
     needs: [build-images]
     runs-on: ubuntu-latest
     steps:
@@ -94,7 +94,6 @@ jobs:
 
       - name: Create Deployment Package
         if: ${{ github.event.inputs.destroy == 'false' }}
-        # Ensure host.json is in the root of the zip
         run: |
           cd appcode/backend/my-app
           zip -r ../../../release.zip . -x "*.git*"
