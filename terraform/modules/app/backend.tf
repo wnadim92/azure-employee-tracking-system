@@ -3,7 +3,6 @@
 module "emp_track_middle_funcapp" {
   source                        = "../../modules/funcapp"
   funcapp_name                  = "${var.project_name}-${var.environment}-${var.region}-funcapp"
-  //pe_subnet_id                  = module.emp_track_middletier_pe_snet.subnet_id
   vnet_integration_subnet_id    = module.emp_track_middletier_vnetintegration_snet.subnet_id
   uami_resource_id              = module.emp_track_managed_identity.uami_id
   uami_client_id                = module.emp_track_managed_identity.client_id
@@ -13,17 +12,10 @@ module "emp_track_middle_funcapp" {
   cosmosdb_endpoint             = module.emp_track_db.cosmosdb_endpoint
   allowed_origins               = ["https://${var.project_name}-${var.environment}-${var.region}-appsvc.azurewebsites.net"]
   public_network_access_enabled = true
-  # blob_dns_zone_id              = azurerm_private_dns_zone.blob.id
-  # file_dns_zone_id              = azurerm_private_dns_zone.file.id
-  # table_dns_zone_id             = azurerm_private_dns_zone.table.id
-  # queue_dns_zone_id             = azurerm_private_dns_zone.queue.id
-  # sites_dns_zone_id             = azurerm_private_dns_zone.web.id
   cosmosdb_key                  = module.emp_track_db.cosmosdb_primary_key
   database_name                 = module.emp_track_db.cosmosdb_database_name
 }
 
-# contians private endpoint for middle tier Python FastAPI Backend Service Function App
-# App storage account private endpoints attached, blob, table, queue, files
 module "emp_track_middletier_pe_snet" {
   source      = "../../modules/subnet"
   subnet_type = "private"
@@ -34,7 +26,6 @@ module "emp_track_middletier_pe_snet" {
   region      = var.region
 }
 
-# VNET Integrating Python FastAPI Backend Service Function App for internal communication to database
 module "emp_track_middletier_vnetintegration_snet" {
   source             = "../../modules/subnet"
   subnet_type        = "private"

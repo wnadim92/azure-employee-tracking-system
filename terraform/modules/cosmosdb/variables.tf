@@ -18,7 +18,7 @@ variable "region" {
 
 variable "principal_id" {
   type        = string
-  description = "The id of the user assigned managed identity's princpal."
+  description = "The id of the user assigned managed identity's principal."
 }
 
 variable "uami_resource_id" {}

@@ -65,5 +65,3 @@ variable "emp_track_db_snet_cidr" {
 }
 
 variable "image_tag" {}
-
-# variable "zip_package_path" {}
