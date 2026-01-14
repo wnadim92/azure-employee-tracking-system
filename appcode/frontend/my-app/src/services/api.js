@@ -26,7 +26,7 @@
 // };
 
 
-const API_URL = process.env.REACT_APP_API_BASE_URL || "http://localhost:7071/api";
+const API_URL = process.env.REACT_APP_API_BASE_URL || "http://localhost:7071";
 
 export const getEmployees = async () => {
   const response = await fetch(`${API_URL}/employees`);
