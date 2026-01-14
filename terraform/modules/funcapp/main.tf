@@ -42,7 +42,9 @@ resource "azurerm_linux_function_app" "this" {
     "COSMOS_DB_NAME"                                     = var.database_name
     "DB_DATABASE_NAME"                                   = var.database_name
     "WEBSITE_RUN_FROM_PACKAGE"                           = "1"
-    "SCM_DO_BUILD_DURING_DEPLOYMENT" = "false"
+    "SCM_DO_BUILD_DURING_DEPLOYMENT"                     = "true"
+    "ENABLE_ORYX_BUILD"                                  = "true"
+    "AzureWebJobsFeatureFlags"                           = "EnableWorkerIndexing"
     // "DOCDBCONNSTR_" = 
   }
 

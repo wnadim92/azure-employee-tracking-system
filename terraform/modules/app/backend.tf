@@ -8,7 +8,6 @@ module "emp_track_middle_funcapp" {
   uami_resource_id              = module.emp_track_managed_identity.uami_id
   uami_client_id                = module.emp_track_managed_identity.client_id
   uami_principal_id             = module.emp_track_managed_identity.principal_id
-  principal_id                  = module.emp_track_managed_identity.principal_id
   rg_name                       = module.rg.rg_name
   region                        = var.region
   cosmosdb_endpoint             = module.emp_track_db.cosmosdb_endpoint

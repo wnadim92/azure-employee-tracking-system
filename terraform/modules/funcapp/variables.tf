@@ -81,8 +81,3 @@ variable "cosmosdb_key" {}
 #   description = "The local path and filename of the Zip packaged application to deploy."
 #   default     = null
 # }
-
-variable "principal_id" {
-  type        = string
-  description = "The id of the user assigned managed identity's princpal."
-}
