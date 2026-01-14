@@ -57,8 +57,6 @@ variable "queue_dns_zone_id" {
   type = string
 }
 
-variable "image_tag" {}
-
 variable "database_name" {}
 
 variable "allowed_origins" {
