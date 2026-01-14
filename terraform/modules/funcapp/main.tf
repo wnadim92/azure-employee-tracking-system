@@ -63,7 +63,7 @@ resource "azurerm_linux_function_app" "this" {
 
 resource "azurerm_storage_share" "this" {
   name                 = lower(var.funcapp_name)
-  storage_account_name = module.storage.storage_account_id
+  storage_account_name = module.storage.storage_account_name
   quota                = 50
 }
 
