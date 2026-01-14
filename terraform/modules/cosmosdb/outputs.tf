@@ -11,12 +11,6 @@ output "cosmosdb_endpoint" {
   value       = azurerm_cosmosdb_account.this.endpoint
 }
 
-# The primary endpoint for the Function App connection string (Identity-based)
-output "cosmosdb_endpoint" {
-  description = "The endpoint used to connect to the Cosmos DB account."
-  value       = azurerm_cosmosdb_account.this.endpoint
-}
-
 # The Account Name used for Role Definitions and App Settings
 output "cosmosdb_account_name" {
   description = "The name of the Cosmos DB account."
