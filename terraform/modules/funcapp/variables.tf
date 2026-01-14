@@ -70,7 +70,9 @@ variable "public_network_access_enabled" {
   default     = false
 }
 
-# variable "sites_dns_zone_id" {}
+# variable "sites_dns_zone_id" {
+#   default = null
+# }
 
 variable "cosmosdb_key" {}
 
