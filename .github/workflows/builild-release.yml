@@ -15,6 +15,10 @@ on:
         description: 'Enable Multi-Region Deployment?'
         type: boolean
         default: false
+      skip_build:
+        description: 'Skip Docker Build?'
+        type: boolean
+        default: false
       destroy:
         description: 'Destroy Infrastructure?'
         type: boolean
@@ -33,10 +37,12 @@ env:
 
 run-name: >
   Deployment to ${{ github.event.inputs.environment }} 
-  (MultiRegion: ${{ github.event.inputs.multiregion }})
+  (MultiRegion: ${{ github.event.inputs.multiregion }}, SkipBuild: ${{ github.event.inputs.skip_build }})
 
 jobs:
   build:
+    # This job will skip if destroy is true OR skip_build is true
+    if: ${{ github.event.inputs.destroy == 'false' && github.event.inputs.skip_build == 'false' }}
     runs-on: ubuntu-latest  
     steps:
       - name: Checkout
@@ -61,9 +67,16 @@ jobs:
           BUILD_ARGS: "REACT_APP_API_URL=https://emptrack-${{ env.ENV }}-${{ env.PRIMARY_REGION }}-funcapp.azurewebsites.net/api"
 
   release:
+    # Use if: always() so that release runs even if build is skipped
+    if: always()
     needs: [build]
     runs-on: ubuntu-latest
     steps:
+      # Check if previous build failed (ignore if it was simply skipped)
+      - name: Check Build Status
+        if: ${{ needs.build.result == 'failure' }}
+        run: exit 1
+
       - name: Checkout
         uses: actions/checkout@v4
 
@@ -96,15 +109,9 @@ jobs:
         if: ${{ github.event.inputs.destroy == 'false' }}
         run: |
           cd appcode/backend/my-app
+          # IMPORTANT: For Python, you must install dependencies if SCM_DO_BUILD is false
+          pip install -r requirements.txt --target=".python_packages/lib/site-packages"
           zip -r ../../../release.zip . -x "*.git*"
-
-      - name: Azure Login
-        if: ${{ github.event.inputs.destroy == 'false' }}
-        uses: azure/login@v2
-        with:
-          client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
       - name: Deploy to Azure Function
         if: ${{ github.event.inputs.destroy == 'false' }}
