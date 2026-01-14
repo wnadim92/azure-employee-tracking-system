@@ -11,7 +11,7 @@ services:
     volumes:
       - azurite_data:/data
     healthcheck:
-      test: ["CMD", "nc", "-z", "localhost", "8081"]
+      test: ["CMD", "nc", "-z", "127.0.0.1", "10000"]
       interval: 5s
       retries: 10
 
