@@ -49,8 +49,6 @@ resource "azurerm_linux_function_app" "this" {
   site_config {
     vnet_route_all_enabled            = true
     always_on                         = true
-    health_check_eviction_time_in_min = 2
-    health_check_path                 = "/health"
 
     cors {
       allowed_origins     = var.allowed_origins
