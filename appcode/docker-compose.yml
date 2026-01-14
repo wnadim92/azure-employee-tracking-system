@@ -1,6 +1,20 @@
 version: '3.8'
 
 services:
+  azurite:
+    image: mcr.microsoft.com/azure-storage/azurite
+    container_name: azurite_emulator
+    ports:
+      - "10000:10000"
+      - "10001:10001"
+      - "10002:10002"
+    volumes:
+      - azurite_data:/data
+    healthcheck:
+      test: ["CMD", "nc", "-z", "127.0.0.1", "10000"]
+      interval: 5s
+      retries: 10
+
   cosmosdb:
     image: mcr.microsoft.com/cosmosdb/linux/azure-cosmos-emulator
     container_name: cosmosdb_emulator
@@ -30,12 +44,14 @@ services:
       - COSMOS_DB_KEY=C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==
       - AzureWebJobsScriptRoot=/home/site/wwwroot
       - AzureFunctionsJobHost__Logging__Console__IsEnabled=true
-      - AzureWebJobsStorage=""
+      - "AzureWebJobsStorage=DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://azurite:10000/devstoreaccount1;QueueEndpoint=http://azurite:10001/devstoreaccount1;TableEndpoint=http://azurite:10002/devstoreaccount1;"
       - FUNCTIONS_WORKER_RUNTIME=python
       - AzureFunctionsJobHost__CORS__AllowedOrigins=*
       - AzureFunctionsJobHost__CORS__SupportCredentials=true
     depends_on:
       cosmosdb:
+        condition: service_healthy
+      azurite:
         condition: service_healthy
     restart: on-failure
     volumes:
@@ -44,7 +60,8 @@ services:
       test: ["CMD", "python", "-c", "import urllib.request, sys; try: urllib.request.urlopen('http://127.0.0.1:80/api/health'); sys.exit(0); except Exception: sys.exit(1)"]
       interval: 10s
       timeout: 10s
-      retries: 20
+      retries: 30
+      start_period: 60s
 
   frontend:
     build:
@@ -60,3 +77,4 @@ services:
 
 volumes:
   cosmos_data:
+  azurite_data:
