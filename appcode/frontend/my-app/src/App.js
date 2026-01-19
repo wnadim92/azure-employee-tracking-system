@@ -27,7 +27,7 @@ function App() {
 
   const fetchEmployees = async () => {
     try {
-      const response = await fetch(`${API_BASE}/employees`);
+      const response = await fetch(`${API_BASE}/api/employees`);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -52,7 +52,7 @@ function App() {
         delete payload.id;
       }
 
-      const response = await fetch(`${API_BASE}/employee`, {
+      const response = await fetch(`${API_BASE}/api/employee`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -75,7 +75,7 @@ function App() {
     if (!window.confirm('Are you sure you want to delete this employee?')) return;
     
     try {
-      const response = await fetch(`${API_BASE}/employees/${id}`, {
+      const response = await fetch(`${API_BASE}/api/employees/${id}`, {
         method: 'DELETE',
       });
 
