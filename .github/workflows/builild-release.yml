@@ -86,7 +86,7 @@ jobs:
           PROJECT_PATH: 'appcode/frontend/my-app'    
           IMAGE_TAG: ${{ github.sha }}
           # Note: Points to Primary API
-          BUILD_ARGS: "REACT_APP_API_URL=https://emptrack-${{ env.ENV }}-${{ env.PRIMARY_REGION }}-funcapp.azurewebsites.net/api"
+          BUILD_ARGS: "REACT_APP_API_URL=https://emptrack-${{ env.ENV }}-${{ env.PRIMARY_REGION }}-funcapp.azurewebsites.net"
 
       - name: Create Zip Package
         if: ${{ github.event.inputs.deploy_code == 'true' && github.event.inputs.destroy == 'false' }}
