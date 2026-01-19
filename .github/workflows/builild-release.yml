@@ -15,10 +15,14 @@ on:
         description: 'Enable Multi-Region Deployment?'
         type: boolean
         default: false
-      skip_build:
-        description: 'Skip Docker Build?'
+      provision_infra:
+        description: 'Provision Infrastructure (Terraform)?'
         type: boolean
-        default: false
+        default: true
+      deploy_code:
+        description: 'Build & Deploy Code (Docker + Functions)?'
+        type: boolean
+        default: true
       destroy:
         description: 'Destroy Infrastructure?'
         type: boolean
@@ -32,51 +36,18 @@ permissions:
 
 env:
   ENV: ${{ github.event.inputs.environment }}
-  # PRIMARY_REGION: "centralindia"
-  # SECONDARY_REGION: "southindia"
   PRIMARY_REGION: "eastus"
   SECONDARY_REGION: "westus"
 
-
+# Fixed run-name to match new inputs
 run-name: >
-  Deployment to ${{ github.event.inputs.environment }} 
-  (MultiRegion: ${{ github.event.inputs.multiregion }}, SkipBuild: ${{ github.event.inputs.skip_build }})
+  Deploy to ${{ github.event.inputs.environment }} 
+  (Infra: ${{ github.event.inputs.provision_infra }}, Code: ${{ github.event.inputs.deploy_code }}, Multi: ${{ github.event.inputs.multiregion }})
 
 jobs:
-  build:
-    if: ${{ github.event.inputs.destroy == 'false' && github.event.inputs.skip_build == 'false' }}
-    runs-on: ubuntu-latest  
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Azure Login
-        uses: azure/login@v2
-        with:
-          client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-
-      - name: Build React App
-        uses: ./.github/actions/docker-build
-        with:
-          REGISTRY_LOGIN_SERVER: ${{ secrets.REGISTRY_LOGIN_SERVER }} 
-          REGISTRY_USERNAME: ${{ secrets.REGISTRY_USERNAME }}
-          REGISTRY_PASSWORD: ${{ secrets.REGISTRY_PASSWORD }}
-          IMAGE_NAME: "emptrack-frontend"
-          PROJECT_PATH: 'appcode/frontend/my-app'    
-          IMAGE_TAG: ${{ github.sha }}
-          BUILD_ARGS: "REACT_APP_API_URL=https://emptrack-${{ env.ENV }}-${{ env.PRIMARY_REGION }}-funcapp.azurewebsites.net"
-
   release:
-    if: always()
-    needs: [build]
     runs-on: ubuntu-latest
     steps:
-      - name: Check Build Status
-        if: ${{ needs.build.result == 'failure' }}
-        run: exit 1
-
       - name: Checkout
         uses: actions/checkout@v4
 
@@ -87,16 +58,9 @@ jobs:
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
-      # 1. CREATE PACKAGE (Must happen before deploy)
-      - name: Create Deployment Package
-        if: ${{ github.event.inputs.destroy == 'false' }}
-        run: |
-          cd appcode/backend/my-app
-          # Python dependencies installed to target folder for "Run From Package"
-          pip install -r requirements.txt --target=".python_packages/lib/site-packages"
-          zip -r ../../../release.zip . -x "*.git*"
-
-      - name: Deploy Infrastructure
+      # --- INFRASTRUCTURE SECTION ---
+      - name: Deploy Infrastructure (Terraform)
+        if: ${{ github.event.inputs.provision_infra == 'true' || github.event.inputs.destroy == 'true' }}
         uses: ./.github/actions/terraform-deploy
         with:
           TARGET_ENVIRONMENT: '${{ env.ENV }}'
@@ -110,9 +74,37 @@ jobs:
           TF_VAR_shouldBeMultiRegion: ${{ github.event.inputs.multiregion }}
           TF_VAR_secondary_region: ${{ env.SECONDARY_REGION }}
 
-      # 4. DEPLOY CODE TO SECONDARY REGION (Conditional)
-      - name: Deploy to Secondary Azure Function
-        if: ${{ github.event.inputs.destroy == 'false' && github.event.inputs.multiregion == 'true' }}
+      # --- CODE DEPLOYMENT SECTION ---
+      - name: Build and Push Docker Frontend
+        if: ${{ github.event.inputs.deploy_code == 'true' && github.event.inputs.destroy == 'false' }}
+        uses: ./.github/actions/docker-build
+        with:
+          REGISTRY_LOGIN_SERVER: ${{ secrets.REGISTRY_LOGIN_SERVER }} 
+          REGISTRY_USERNAME: ${{ secrets.REGISTRY_USERNAME }}
+          REGISTRY_PASSWORD: ${{ secrets.REGISTRY_PASSWORD }}
+          IMAGE_NAME: "emptrack-frontend"
+          PROJECT_PATH: 'appcode/frontend/my-app'    
+          IMAGE_TAG: ${{ github.sha }}
+          # Note: Points to Primary API
+          BUILD_ARGS: "REACT_APP_API_URL=https://emptrack-${{ env.ENV }}-${{ env.PRIMARY_REGION }}-funcapp.azurewebsites.net/api"
+
+      - name: Create Zip Package
+        if: ${{ github.event.inputs.deploy_code == 'true' && github.event.inputs.destroy == 'false' }}
+        run: |
+          cd appcode/backend/my-app
+          pip install -r requirements.txt --target=".python_packages/lib/site-packages"
+          zip -r ../../../release.zip . -x "*.git*"
+
+      - name: Deploy Backend to Primary
+        if: ${{ github.event.inputs.deploy_code == 'true' && github.event.inputs.destroy == 'false' }}
+        uses: Azure/functions-action@v1
+        with:
+          app-name: 'emptrack-${{ env.ENV }}-${{ env.PRIMARY_REGION }}-funcapp'
+          package: 'release.zip'
+          scm-do-build-during-deployment: false
+
+      - name: Deploy Backend to Secondary
+        if: ${{ github.event.inputs.deploy_code == 'true' && github.event.inputs.multiregion == 'true' && github.event.inputs.destroy == 'false' }}
         uses: Azure/functions-action@v1
         with:
           app-name: 'emptrack-${{ env.ENV }}-${{ env.SECONDARY_REGION }}-funcapp'
