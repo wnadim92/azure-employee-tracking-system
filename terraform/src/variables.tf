@@ -11,7 +11,12 @@ variable "primary_region_emp_track_middletier_pe_snet_cidr" {}
 variable "primary_region_emp_track_middletier_vnetintegration_snet_cidr" {}
 variable "primary_region_emp_track_db_snet_cidr" {}
 
-variable "shouldBeMultiRegion" {}
+variable "shouldBeMultiRegion" {
+  description = "Enable multi-region deployment"
+  type        = bool
+  default     = false
+}
+
 variable "secondary_region" {}
 variable "secondary_region_vnet_address_spaces" {}
 variable "secondary_region_dns_servers" {}
