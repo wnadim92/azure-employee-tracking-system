@@ -41,7 +41,8 @@ resource "azurerm_linux_function_app" "this" {
     "SCM_DO_BUILD_DURING_DEPLOYMENT"                     = "false"
     "ENABLE_ORYX_BUILD"                                  = "false"
     "AzureWebJobsFeatureFlags"                           = "EnableWorkerIndexing"
-    // "DOCDBCONNSTR_" = 
+    "PYTHONPATH"                                         = "/home/site/wwwroot/.python_packages/lib/site-packages"
+
   }
 
   site_config {
