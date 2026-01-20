@@ -25,11 +25,9 @@ resource "azurerm_linux_function_app" "this" {
     "AzureWebJobsStorage"                                = azurerm_storage_account.this.primary_connection_string
     "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING"           = azurerm_storage_account.this.primary_connection_string
     "WEBSITE_CONTENTSHARE"                               = azurerm_storage_share.this.name
-//    "WEBSITE_DNS_SERVER"                                 = "168.63.129.16" # Required for Azure DNS so can reach azure DNS such as for private endpoint DNS Zones
     "WEBSITE_SKIP_CONTENT_SHARE_VALIDATION"              = "1"
     "AzureFunctionsJobHost__Logging__Console__IsEnabled" = "true"
     "FUNCTIONS_WORKER_RUNTIME"                           = "python"
-    #"WEBSITE_CONTENTOVERVNET"                            = "1"
     "FUNCTIONS_EXTENSION_VERSION"                        = "~4"
     "COSMOS_DB_ENDPOINT"                                 = var.cosmosdb_endpoint
     "COSMOS_DB_KEY"                                      = var.cosmosdb_key
@@ -43,8 +41,6 @@ resource "azurerm_linux_function_app" "this" {
     "PYTHONPATH"                                         = "/home/site/wwwroot/.python_packages/lib/site-packages"
     "AzureWebJobsScriptRoot"                            = "/home/site/wwwroot"
     "AzureFunctionsJobHost__CORS__AllowedOrigins"     = "*"
-    # "AzureFunctionsJobHost__CORS__SupportCredentials" = "true"
-
   }
 
   site_config {

@@ -39,7 +39,6 @@ env:
   PRIMARY_REGION: "eastus"
   SECONDARY_REGION: "westus"
 
-# Fixed run-name to match new inputs
 run-name: >
   Deploy to ${{ github.event.inputs.environment }} 
   (Infra: ${{ github.event.inputs.provision_infra }}, Code: ${{ github.event.inputs.deploy_code }}, Multi: ${{ github.event.inputs.multiregion }})
