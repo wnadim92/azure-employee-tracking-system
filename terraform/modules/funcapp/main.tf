@@ -25,18 +25,16 @@ resource "azurerm_linux_function_app" "this" {
     "AzureWebJobsStorage"                                = azurerm_storage_account.this.primary_connection_string
     "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING"           = azurerm_storage_account.this.primary_connection_string
     "WEBSITE_CONTENTSHARE"                               = azurerm_storage_share.this.name
-    "WEBSITE_DNS_SERVER"                                 = "168.63.129.16" # Required for Azure DNS so can reach azure DNS such as for private endpoint DNS Zones
+//    "WEBSITE_DNS_SERVER"                                 = "168.63.129.16" # Required for Azure DNS so can reach azure DNS such as for private endpoint DNS Zones
     "WEBSITE_SKIP_CONTENT_SHARE_VALIDATION"              = "1"
     "AzureFunctionsJobHost__Logging__Console__IsEnabled" = "true"
     "FUNCTIONS_WORKER_RUNTIME"                           = "python"
     #"WEBSITE_CONTENTOVERVNET"                            = "1"
     "FUNCTIONS_EXTENSION_VERSION"                        = "~4"
-    "CosmosDbConnection__accountEndpoint"                = var.cosmosdb_endpoint
-    "CosmosDbConnection__clientId"                       = var.uami_client_id
     "COSMOS_DB_ENDPOINT"                                 = var.cosmosdb_endpoint
     "COSMOS_DB_KEY"                                      = var.cosmosdb_key
     "COSMOS_DB_NAME"                                     = var.database_name
-    "DB_DATABASE_NAME"                                   = var.database_name
+    # "DB_DATABASE_NAME"                                   = var.database_name
     "WEBSITE_RUN_FROM_PACKAGE"                           = "1"
     "SCM_DO_BUILD_DURING_DEPLOYMENT"                     = "false"
     "ENABLE_ORYX_BUILD"                                  = "false"
@@ -49,7 +47,7 @@ resource "azurerm_linux_function_app" "this" {
   }
 
   site_config {
-    vnet_route_all_enabled            = true
+    # vnet_route_all_enabled            = true
     always_on                         = true
 
     cors {
