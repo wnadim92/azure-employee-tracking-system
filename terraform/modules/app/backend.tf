@@ -10,7 +10,7 @@ module "emp_track_middle_funcapp" {
   rg_name                       = module.rg.rg_name
   region                        = var.region
   cosmosdb_endpoint             = module.emp_track_db.cosmosdb_endpoint
-  allowed_origins               = ["https://${var.project_name}-${var.environment}-${var.region}-appsvc.azurewebsites.net"]
+  allowed_origins               = ["https://${var.project_name}-${var.environment}-${var.region}-appsvc.azurewebsites.net","*"]
   public_network_access_enabled = true
   cosmosdb_key                  = module.emp_track_db.cosmosdb_primary_key
   database_name                 = module.emp_track_db.cosmosdb_database_name

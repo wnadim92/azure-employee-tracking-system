@@ -85,7 +85,7 @@ class Employee(BaseModel):
     class Config:
         populate_by_name = True
 
-@router.get("/employees", response_model=List[Employee])
+@router.get("/api/employees", response_model=List[Employee])
 def get_employees():
     container = get_container()
     employees = []
@@ -95,7 +95,7 @@ def get_employees():
         employees.append(Employee(**item))
     return employees
 
-@router.post("/employee")
+@router.post("/api/employee")
 def save_employee(emp: Employee) -> Employee:
     container = get_container()
 
@@ -117,7 +117,7 @@ def save_employee(emp: Employee) -> Employee:
     created_item = container.upsert_item(emp.model_dump(by_alias=True))
     return Employee(**created_item)
 
-@router.get("/employees/{employee_id}", response_model=Employee)
+@router.get("/api/employees/{employee_id}", response_model=Employee)
 def get_employee_by_id(employee_id: str):
     container = get_container()
     from azure.core.exceptions import ResourceNotFoundError
@@ -129,7 +129,7 @@ def get_employee_by_id(employee_id: str):
     except ResourceNotFoundError:
         raise HTTPException(status_code=404, detail="Employee not found")
 
-@router.delete("/employees/{employee_id}", status_code=204)
+@router.delete("/api/employees/{employee_id}", status_code=204)
 def delete_employee(employee_id: str):
     container = get_container()
     from azure.cosmos.exceptions import CosmosHttpResponseError
