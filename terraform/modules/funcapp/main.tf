@@ -8,13 +8,13 @@ resource "azurerm_service_plan" "this" {
 }
 
 resource "azurerm_linux_function_app" "this" {
-  name                          = var.funcapp_name
-  resource_group_name           = var.rg_name
-  location                      = var.region
-  service_plan_id               = azurerm_service_plan.this.id
-  storage_account_name          = azurerm_storage_account.this.name
-  storage_account_access_key    = azurerm_storage_account.this.primary_access_key
-  virtual_network_subnet_id     = var.vnet_integration_subnet_id
+  name                       = var.funcapp_name
+  resource_group_name        = var.rg_name
+  location                   = var.region
+  service_plan_id            = azurerm_service_plan.this.id
+  storage_account_name       = azurerm_storage_account.this.name
+  storage_account_access_key = azurerm_storage_account.this.primary_access_key
+  virtual_network_subnet_id  = var.vnet_integration_subnet_id
 
   identity {
     type         = "UserAssigned"
@@ -39,13 +39,13 @@ resource "azurerm_linux_function_app" "this" {
     "ENABLE_ORYX_BUILD"                                  = "true"
     "AzureWebJobsFeatureFlags"                           = "EnableWorkerIndexing"
     "PYTHONPATH"                                         = "/home/site/wwwroot/.python_packages/lib/site-packages"
-    "AzureWebJobsScriptRoot"                            = "/home/site/wwwroot"
-    "AzureFunctionsJobHost__CORS__AllowedOrigins"     = "*"
+    "AzureWebJobsScriptRoot"                             = "/home/site/wwwroot"
+    "AzureFunctionsJobHost__CORS__AllowedOrigins"        = "*"
   }
 
   site_config {
     # vnet_route_all_enabled            = true
-    always_on                         = true
+    always_on = true
 
     # cors {
     #   allowed_origins     = var.allowed_origins
