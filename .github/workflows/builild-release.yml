@@ -95,6 +95,9 @@ jobs:
           pip install -r requirements.txt --target=".python_packages/lib/site-packages"
           zip -r ../../../release.zip . -x "*.git*"
 
+      - name: Verify ZIP Content
+        run: unzip -l release.zip | head -n 15
+
       - name: Deploy Backend to Primary
         if: ${{ github.event.inputs.deploy_code == 'true' && github.event.inputs.destroy == 'false' }}
         uses: Azure/functions-action@v1
