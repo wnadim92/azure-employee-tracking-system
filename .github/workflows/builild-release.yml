@@ -87,12 +87,12 @@ jobs:
           IMAGE_TAG: ${{ github.sha }}
           BUILD_ARGS: "REACT_APP_API_URL=https://emptrack-${{ env.ENV }}-${{ env.PRIMARY_REGION }}-funcapp.azurewebsites.net"
 
-      # - name: Create Zip Package
-      #   if: ${{ github.event.inputs.deploy_code == 'true' && github.event.inputs.destroy == 'false' }}
-      #   run: |
-      #     cd appcode/backend/my-app
-      #     pip install -r requirements.txt --target=".python_packages/lib/site-packages"
-      #     zip -r ../../../release.zip . -x "*.git*"
+      - name: Create Zip Package
+        if: ${{ github.event.inputs.deploy_code == 'true' && github.event.inputs.destroy == 'false' }}
+        run: |
+          cd appcode/backend/my-app
+          pip install -r requirements.txt --target=".python_packages/lib/site-packages"
+          zip -r ../../../release.zip . -x "*.git*"
 
       - name: Verify ZIP Content
         run: unzip -l release.zip | head -n 15
