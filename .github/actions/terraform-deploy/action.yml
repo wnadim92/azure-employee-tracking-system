@@ -75,7 +75,6 @@ runs:
 
     - name: Get Terraform Outputs
       id: tf_outputs
-      # Only run this step if DESTROY is NOT true
       if: ${{ inputs.DESTROY != 'true' }}
       shell: bash
       working-directory: ${{ inputs.CHECKOUT_PATH }}/${{ inputs.WORKING_DIRECTORY }}
