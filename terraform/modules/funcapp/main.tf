@@ -42,7 +42,7 @@ resource "azurerm_linux_function_app" "this" {
     "PYTHONPATH"                                         = "/home/site/wwwroot/.python_packages/lib/site-packages"
     "AzureWebJobsScriptRoot"                            = "/home/site/wwwroot"
     "AzureFunctionsJobHost__CORS__AllowedOrigins"     = "*"
-    "AzureFunctionsJobHost__CORS__SupportCredentials" = "true"
+    # "AzureFunctionsJobHost__CORS__SupportCredentials" = "true"
 
   }
 
@@ -50,10 +50,10 @@ resource "azurerm_linux_function_app" "this" {
     # vnet_route_all_enabled            = true
     always_on                         = true
 
-    cors {
-      allowed_origins     = var.allowed_origins
-      support_credentials = true
-    }
+    # cors {
+    #   allowed_origins     = var.allowed_origins
+    #   support_credentials = true
+    # }
 
     application_stack {
       python_version = "3.11"
