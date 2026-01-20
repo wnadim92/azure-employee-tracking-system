@@ -90,9 +90,8 @@ jobs:
       - name: Create Zip Package
         if: ${{ github.event.inputs.deploy_code == 'true' && github.event.inputs.destroy == 'false' }}
         run: |
-          cd appcode/backend/my-app
-          # We no longer 'pip install' here because Azure will do it
-          zip -r ../../../release.zip . -x "*.git*" "venv/*" ".python_packages/*"
+         cd appcode/backend/my-app  # Go INTO the directory
+         zip -r ../../../release.zip . -x "*.git*"
 
       - name: Verify ZIP Content
         run: unzip -l release.zip | head -n 15
