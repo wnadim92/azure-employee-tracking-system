@@ -91,8 +91,8 @@ jobs:
         if: ${{ github.event.inputs.deploy_code == 'true' && github.event.inputs.destroy == 'false' }}
         run: |
           cd appcode/backend/my-app
-          pip install -r requirements.txt --target=".python_packages/lib/site-packages"
-          zip -r ../../../release.zip . -x "*.git*"
+          # We no longer 'pip install' here because Azure will do it
+          zip -r ../../../release.zip . -x "*.git*" "venv/*" ".python_packages/*"
 
       - name: Verify ZIP Content
         run: unzip -l release.zip | head -n 15
@@ -103,7 +103,7 @@ jobs:
         with:
           app-name: 'emptrack-${{ env.ENV }}-${{ env.PRIMARY_REGION }}-funcapp'
           package: 'release.zip'
-          scm-do-build-during-deployment: false
+          scm-do-build-during-deployment: true
 
       - name: Deploy Backend to Secondary
         if: ${{ github.event.inputs.deploy_code == 'true' && github.event.inputs.multiregion == 'true' && github.event.inputs.destroy == 'false' }}
@@ -111,4 +111,4 @@ jobs:
         with:
           app-name: 'emptrack-${{ env.ENV }}-${{ env.SECONDARY_REGION }}-funcapp'
           package: 'release.zip'
-          scm-do-build-during-deployment: false
+          scm-do-build-during-deployment: true
